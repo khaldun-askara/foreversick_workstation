@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace foreversick_workstation
 {
-    public partial class Form1 : Form
+    public partial class mainMenu_form : Form
     {
-        public Form1()
+        public mainMenu_form()
         {
             InitializeComponent();
         }
