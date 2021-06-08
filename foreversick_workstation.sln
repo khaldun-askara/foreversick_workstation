@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31321.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "foreversick_workstation", "foreversick_workstation\foreversick_workstation.csproj", "{659C916B-0E8D-4D4E-A770-63D5813BD21A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{659C916B-0E8D-4D4E-A770-63D5813BD21A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{659C916B-0E8D-4D4E-A770-63D5813BD21A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{659C916B-0E8D-4D4E-A770-63D5813BD21A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{659C916B-0E8D-4D4E-A770-63D5813BD21A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {75881D04-8B01-4289-96C9-180225961385}
+	EndGlobalSection
+EndGlobal
