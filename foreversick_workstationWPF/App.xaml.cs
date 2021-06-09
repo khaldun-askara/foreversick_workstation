@@ -13,5 +13,6 @@ namespace foreversick_workstationWPF
     /// </summary>
     public partial class App : Application
     {
+        public static readonly string HOST_URL = "https://localhost:44320/";
     }
 }

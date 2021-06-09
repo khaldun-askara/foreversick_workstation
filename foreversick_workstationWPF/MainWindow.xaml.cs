@@ -23,6 +23,53 @@ namespace foreversick_workstationWPF
         public MainWindow()
         {
             InitializeComponent();
+
+            // тут происходит загрузка списка диагнозов с предложениями,
+            // а потом этот список засовывается в листвью
+            InitialiseListViewWithUserSuggestions();
+        }
+
+        private async void InitialiseListViewWithUserSuggestions()
+        {
+            //var diagnosestemp = new Diagnosis[]
+            //{ new Diagnosis(1, "diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1diagnosis1", "mkb-1"),
+            //    new Diagnosis(1, "diagnosis1", "mkb-1"),
+            //    new Diagnosis(1, "diagnosis1", "mkb-1") };
+            //listOfSuggestedDiagnoses.ItemsSource = new List<Diagnosis>(diagnosestemp);
+            try
+            {
+                listOfSuggestedDiagnoses.ItemsSource = await DiagnosisList.GetDiagnosisListAsync("GameContext/Diagnoses/suggestions");
+            }
+            catch (Exception e)
+            {
+                MessageBoxResult result = MessageBox.Show(e.Message + ". Попробовать снова?", "Что-то не так", MessageBoxButton.YesNo);
+                switch(result)
+                {
+                    case MessageBoxResult.Yes:
+                        InitialiseListViewWithUserSuggestions();
+                        break;
+                    case MessageBoxResult.No:
+                        this.Close();
+                        break;
+                }
+            }
+
+        }
+
+        //private async Task<string> thinking ()
+        //{
+            
+        //}
+
+        private async void listOfSuggestedDiagnoses_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            diagnosisSuggestion.Inlines.Clear();
+            diagnosisSuggestion.Inlines.Add(new Run() { Text = "Загрузка", Style = Application.Current.FindResource("baseRun") as Style });
+            //List<Run> temp = await Task.Run(()=> UserSuggestionList.GetSuggestionsForDiagnosis(115));
+            List<Inline> temp = await UserSuggestionList.GetSuggestionsForDiagnosis((listOfSuggestedDiagnoses.SelectedItem as Diagnosis).id);
+            diagnosisSuggestion.Inlines.Clear();
+            foreach (var t in temp)
+                diagnosisSuggestion.Inlines.Add(t);
         }
     }
 }

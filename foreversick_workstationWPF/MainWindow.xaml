@@ -17,13 +17,19 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Rectangle Grid.Row="0" Grid.RowSpan="2" Margin="0,0,15,0"/>
+            <Rectangle Style="{StaticResource backRectangle}" Grid.Row="0" Grid.RowSpan="2" Margin="0,0,15,0"/>
             <Label Grid.Row="0" Margin="10,10,10,10">
                 <TextBlock Style="{StaticResource headerTextBlock}">Предложения пользователей:</TextBlock>
             </Label>
-            <StackPanel Grid.Row="1">
-                
-            </StackPanel>
+            <ScrollViewer Grid.Row="1" Margin="20,0,30,20">
+                <ListView Background="#00000000" x:Name="listOfSuggestedDiagnoses" HorizontalAlignment="Stretch" SelectionChanged="listOfSuggestedDiagnoses_SelectionChanged">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Style="{StaticResource menuButtonText}" Text="{Binding diagnosis_text}" Tag ="{Binding id}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
         </Grid>
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
@@ -31,7 +37,10 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <Rectangle Grid.Row="0" Margin="15,0,0,5"/>
+            <Rectangle Style="{StaticResource backRectangle}" Grid.Row="0" Margin="15,0,0,5"/>
+            <ScrollViewer Grid.Row="0" Margin="30, 15, 15, 20">
+                <TextBlock  x:Name="diagnosisSuggestion"/>
+            </ScrollViewer>
             <Grid Grid.Row="1" Margin="15,5,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -45,7 +54,7 @@
                 </Button>
             </Grid>
             <Button Style="{StaticResource baseButton}" Height="auto" Grid.Row="2" Margin="15,5,0,0">
-                <TextBlock Style="{StaticResource menuButtonText}">Редкатирование и удаление</TextBlock>
+                <TextBlock Style="{StaticResource menuButtonText}">Редактирование и удаление</TextBlock>
             </Button>
         </Grid>
     </Grid>

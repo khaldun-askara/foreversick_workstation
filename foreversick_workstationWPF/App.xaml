@@ -26,32 +26,41 @@
             <Setter Property="FontFamily" Value="Roboto Light, Roboto"/>
             <Setter Property="FontSize" Value="18" />
         </Style>
-        
+        <!-- Run styles -->
+        <Style x:Key="baseRun" TargetType="Run">
+            <Setter Property="Foreground" Value="#434343" />
+            <Setter Property="FontFamily" Value="Roboto Light, Roboto"/>
+            <Setter Property="FontSize" Value="18" />
+        </Style>
+        <Style x:Key="boldRun" TargetType="Run" BasedOn = "{StaticResource baseRun}" >
+            <Setter Property="FontFamily" Value="Roboto Bold"/>
+        </Style>
+
+        <!-- Rectangle styles -->
+        <Style TargetType="Rectangle" x:Key="backRectangle">
+            <Setter Property="Fill" Value="#e7e7e7" />
+            <Setter Property="Stroke" Value="#434343" />
+            <Setter Property="StrokeThickness" Value="0.8" />
+            <!--<Setter Property="RadiusX" Value="20" />
+            <Setter Property="RadiusY" Value="20" />-->
+        </Style>
+
         <!-- Button styles -->
         <Style x:Key="baseButton" TargetType="Button">
-            <!--Set to true to not get any properties from the themes.-->
+            <!--Set to true to not get any properties from the themes.--><!--
             <Setter Property="OverridesDefaultStyle" Value="True"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid>
-                            <Rectangle/>
+                            <Rectangle Style="{StaticResource backRectangle}"/>
                             <ContentPresenter HorizontalAlignment="Center"
                             VerticalAlignment="Center"/>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
-            </Setter>
+            </Setter>-->
         </Style>
 
-        <!-- Rectangle styles -->
-        <Style TargetType="Rectangle">
-            <Setter Property="Fill" Value="#e7e7e7" />
-            <Setter Property="Stroke" Value="#434343" />
-            <Setter Property="StrokeThickness" Value="1" />
-            <Setter Property="RadiusX" Value="20" />
-            <Setter Property="RadiusY" Value="20" />
-        </Style>
-        
     </Application.Resources>
 </Application>
