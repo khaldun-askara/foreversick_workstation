@@ -56,20 +56,31 @@ namespace foreversick_workstationWPF
 
         }
 
-        //private async Task<string> thinking ()
-        //{
-            
-        //}
-
         private async void listOfSuggestedDiagnoses_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             diagnosisSuggestion.Inlines.Clear();
-            diagnosisSuggestion.Inlines.Add(new Run() { Text = "Загрузка", Style = Application.Current.FindResource("baseRun") as Style });
+            diagnosisSuggestion.Inlines.Add(new Run() { Text = "Загрузка...", Style = Application.Current.FindResource("baseRun") as Style });
             //List<Run> temp = await Task.Run(()=> UserSuggestionList.GetSuggestionsForDiagnosis(115));
-            List<Inline> temp = await UserSuggestionList.GetSuggestionsForDiagnosis((listOfSuggestedDiagnoses.SelectedItem as Diagnosis).id);
-            diagnosisSuggestion.Inlines.Clear();
-            foreach (var t in temp)
-                diagnosisSuggestion.Inlines.Add(t);
+            try
+            {
+                List<Inline> temp = await UserSuggestionList.GetSuggestionsForDiagnosis((listOfSuggestedDiagnoses.SelectedItem as Diagnosis).id);
+                diagnosisSuggestion.Inlines.Clear();
+                foreach (var t in temp)
+                    diagnosisSuggestion.Inlines.Add(t);
+            }
+            catch(Exception exc)
+            {
+                MessageBoxResult result = MessageBox.Show(exc.Message + ". Попробовать снова?", "Что-то не так", MessageBoxButton.YesNo);
+                switch (result)
+                {
+                    case MessageBoxResult.Yes:
+                        listOfSuggestedDiagnoses_SelectionChanged(sender, e);
+                        break;
+                    //case MessageBoxResult.No:
+                    //    this.Close();
+                    //    break;
+                }
+            }
         }
     }
 }

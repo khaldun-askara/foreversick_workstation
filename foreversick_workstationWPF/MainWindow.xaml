@@ -22,7 +22,7 @@
                 <TextBlock Style="{StaticResource headerTextBlock}">Предложения пользователей:</TextBlock>
             </Label>
             <ScrollViewer Grid.Row="1" Margin="20,0,30,20">
-                <ListView Background="#00000000" x:Name="listOfSuggestedDiagnoses" HorizontalAlignment="Stretch" SelectionChanged="listOfSuggestedDiagnoses_SelectionChanged">
+                <ListView Background="#00000000" x:Name="listOfSuggestedDiagnoses" HorizontalAlignment="Stretch" SelectionMode="Single" SelectionChanged="listOfSuggestedDiagnoses_SelectionChanged">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Style="{StaticResource menuButtonText}" Text="{Binding diagnosis_text}" Tag ="{Binding id}"/>
