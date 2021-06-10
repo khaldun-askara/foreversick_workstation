@@ -21,15 +21,13 @@
             <Label Grid.Row="0" Margin="10,10,10,10">
                 <TextBlock Style="{StaticResource headerTextBlock}">Предложения пользователей:</TextBlock>
             </Label>
-            <ScrollViewer Grid.Row="1" Margin="20,0,30,20">
-                <ListView Background="#00000000" x:Name="listOfSuggestedDiagnoses" HorizontalAlignment="Stretch" SelectionMode="Single" SelectionChanged="listOfSuggestedDiagnoses_SelectionChanged">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Style="{StaticResource menuButtonText}" Text="{Binding diagnosis_text}" Tag ="{Binding id}"/>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </ScrollViewer>
+            <ListView Grid.Row="1" Margin="20,0,30,20" Background="#00000000" x:Name="listOfSuggestedDiagnoses" HorizontalAlignment="Stretch" SelectionMode="Single" SelectionChanged="listOfSuggestedDiagnoses_SelectionChanged">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Style="{StaticResource menuButtonText}" Text="{Binding diagnosis_text}" Tag ="{Binding id}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>

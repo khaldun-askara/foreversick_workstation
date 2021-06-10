@@ -45,26 +45,8 @@ namespace foreversick_workstationWPF
             List<UserSuggestion> suggestions = await Task.Run(() => UserSuggestionList.GetSuggestionsForDiagnosis("GameContext/Suggestions/", diagnosis_id));
             List<Inline> result = new();
             List<Inline> symptomsList = new();
-            symptomsList.Add(new Run()
-            {
-                Text = "Симптомы:",
-                Style = Application.Current.FindResource("boldRun") as Style
-            });
-            symptomsList.Add(new LineBreak());
             List<Inline> visualsList = new();
-            visualsList.Add(new Run()
-            {
-                Text = "Визуальные проявления:",
-                Style = Application.Current.FindResource("boldRun") as Style
-            });
-            visualsList.Add(new LineBreak());
             List<Inline> quesansList = new();
-            quesansList.Add(new Run()
-            {
-                Text = "Вопросы и ответы:",
-                Style = Application.Current.FindResource("boldRun") as Style
-            });
-            quesansList.Add(new LineBreak());
             foreach (UserSuggestion suggestion in suggestions)
             {
                 if (!string.IsNullOrWhiteSpace(suggestion.symptoms))
@@ -96,8 +78,35 @@ namespace foreversick_workstationWPF
                     quesansList.Add(new LineBreak());
                 }
             }
+            if(symptomsList.Count>0)
+            {
+                result.Add(new Run()
+                {
+                    Text = "Симптомы:",
+                    Style = Application.Current.FindResource("boldRun") as Style
+                });
+                result.Add(new LineBreak());
+            }
             result.AddRange(symptomsList);
+            if (visualsList.Count>0)
+            {
+                result.Add(new Run()
+                {
+                    Text = "Визуальные проявления:",
+                    Style = Application.Current.FindResource("boldRun") as Style
+                });
+                result.Add(new LineBreak());
+            }
             result.AddRange(visualsList);
+            if (quesansList.Count > 0)
+            {
+                result.Add(new Run()
+                {
+                    Text = "Вопросы и ответы:",
+                    Style = Application.Current.FindResource("boldRun") as Style
+                });
+                result.Add(new LineBreak());
+            }
             result.AddRange(quesansList);
             return result;
         }
