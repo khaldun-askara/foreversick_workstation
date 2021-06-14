@@ -1,17 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace foreversick_workstationWPF
 {
@@ -43,7 +34,7 @@ namespace foreversick_workstationWPF
             catch (Exception e)
             {
                 MessageBoxResult result = MessageBox.Show(e.Message + ". Попробовать снова?", "Что-то не так", MessageBoxButton.YesNo);
-                switch(result)
+                switch (result)
                 {
                     case MessageBoxResult.Yes:
                         InitialiseListViewWithUserSuggestions();
@@ -68,7 +59,7 @@ namespace foreversick_workstationWPF
                 foreach (var t in temp)
                     diagnosisSuggestion.Inlines.Add(t);
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 MessageBoxResult result = MessageBox.Show(exc.Message + ". Попробовать снова?", "Что-то не так", MessageBoxButton.YesNo);
                 switch (result)
@@ -76,11 +67,22 @@ namespace foreversick_workstationWPF
                     case MessageBoxResult.Yes:
                         listOfSuggestedDiagnoses_SelectionChanged(sender, e);
                         break;
-                    //case MessageBoxResult.No:
-                    //    this.Close();
-                    //    break;
+                        //case MessageBoxResult.No:
+                        //    this.Close();
+                        //    break;
                 }
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            AddingEntitiesWindow window;
+            if (listOfSuggestedDiagnoses.SelectedItem != null)
+                window = new(listOfSuggestedDiagnoses.SelectedItem as Diagnosis);
+            else
+                window = new();
+            window.Show();
+            this.Close();
         }
     }
 }

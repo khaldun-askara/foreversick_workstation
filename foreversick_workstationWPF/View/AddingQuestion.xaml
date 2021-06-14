@@ -1,0 +1,34 @@
+﻿<Window x:Class="foreversick_workstationWPF.AddingQuestion"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:foreversick_workstationWPF"
+        mc:Ignorable="d"
+        Title="{Binding Title_text}"
+        Height="300" Width="500">
+    <Grid>
+        <StackPanel VerticalAlignment="Center">
+            <Label Margin="20">
+                <TextBlock Style="{StaticResource baseTextBlock}">
+                    <Run>Введите текст </Run>
+                    <Run Text="{Binding Label_text}"/>
+                    <Run>:</Run>
+                </TextBlock>
+            </Label>
+            <TextBox Margin="20" Text="{Binding Name}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Margin="20" Padding="10">
+                    <Button.Content>
+                        <TextBlock Style="{StaticResource baseTextBlock}" Text="Добавить"/>
+                    </Button.Content>
+                </Button>
+                <Button Margin="20" Padding="10">
+                    <Button.Content>
+                        <TextBlock Style="{StaticResource baseTextBlock}" Text="Отмена"/>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

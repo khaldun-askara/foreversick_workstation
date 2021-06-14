@@ -67,7 +67,7 @@ namespace foreversick_workstationWPF
         }
     }
     [Serializable]
-    public class Diagnosis
+    public class Diagnosis : IEquatable<Diagnosis>
     {
         public int id { get; set; }
         public string diagnosis_text { get; set; }
@@ -78,6 +78,15 @@ namespace foreversick_workstationWPF
             this.id = id;
             this.diagnosis_text = diagnosis_text;
             this.mcb_code = mcb_code;
+        }
+        public override string ToString() 
+        {
+            return diagnosis_text;
+        }
+
+        public bool Equals(Diagnosis other)
+        {
+            return (other != null) && id == other.id;
         }
     }
 }

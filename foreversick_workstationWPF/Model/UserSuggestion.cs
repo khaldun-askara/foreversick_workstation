@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
 
 namespace foreversick_workstationWPF
@@ -78,7 +75,7 @@ namespace foreversick_workstationWPF
                     quesansList.Add(new LineBreak());
                 }
             }
-            if(symptomsList.Count>0)
+            if (symptomsList.Count > 0)
             {
                 result.Add(new Run()
                 {
@@ -88,7 +85,7 @@ namespace foreversick_workstationWPF
                 result.Add(new LineBreak());
             }
             result.AddRange(symptomsList);
-            if (visualsList.Count>0)
+            if (visualsList.Count > 0)
             {
                 result.Add(new Run()
                 {

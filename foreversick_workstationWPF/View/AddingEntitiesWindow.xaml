@@ -1,0 +1,164 @@
+﻿<Window x:Class="foreversick_workstationWPF.AddingEntitiesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:foreversick_workstationWPF"
+        mc:Ignorable="d"
+        Title="Добавление информации о диагнозах" Height="800" Width="1200" WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <local:DataContext/>
+    </Window.DataContext>
+    <Grid Margin="2,0,-2,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Margin="30,30,30,0">
+            <Label>Выберите диагноз:</Label>
+            <ComboBox StaysOpenOnEdit="True" 
+                      IsTextSearchEnabled="False" 
+                      x:Name="diagnosisComboBox" 
+                      ItemsSource="{Binding DiagnosisDataContext.SearchListBySubstring}" 
+                      SelectedItem="{Binding DiagnosisDataContext.SelectedItem}" 
+                      Text="{Binding DiagnosisDataContext.Combobox_text}" 
+                      IsEditable="True" 
+                      BorderThickness="1,1,1,1">
+            </ComboBox>
+        </StackPanel>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="6*"/>
+            </Grid.ColumnDefinitions>
+            <Rectangle Style="{StaticResource backRectangle}" 
+                       Grid.Column="0" Margin="30,15,15,30"/>
+            <ListView Background="#00000000" 
+                      Grid.Column="0" 
+                      Margin="30,15,15,30"
+                      ItemsSource="{Binding UserSuggestions}"
+                      x:Name="userSuggestionsLV">
+                <!--<ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Width" Value="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type ScrollContentPresenter}}}"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>-->
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Button Height="20" 
+                                    Width="20" 
+                                    VerticalAlignment="Top" 
+                                    HorizontalContentAlignment="Center" 
+                                    VerticalContentAlignment="Center">x</Button>
+                            <TextBlock Grid.Column="1" 
+                                       Margin="10,10,10,10"
+                                       TextWrapping="Wrap"
+                                       HorizontalAlignment="Stretch">
+                                <Run Style="{StaticResource boldRun}">Симптомы:</Run>
+                                <LineBreak/>
+                                <Run Style="{StaticResource baseRun}" Text="{Binding symptoms}"/>
+                                <LineBreak/>
+                                <Run Style="{StaticResource boldRun}">Визуальные проявления:</Run>
+                                <LineBreak/>
+                                <Run Style="{StaticResource baseRun}" Text="{Binding visible_signs}"/>
+                                <LineBreak/>
+                                <Run Style="{StaticResource boldRun}">Вопросы и ответы:</Run>
+                                <LineBreak/>
+                                <Run Style="{StaticResource baseRun}" Text="{Binding questions_and_answers}"/>
+                            </TextBlock>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <TabControl Grid.Column="1" Margin="15,15,30,30" Background="#e7e7e7" BorderBrush="#434343">
+                <TabItem Header="Вопросы и ответы" BorderBrush="#434343">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="107*"/>
+                            <RowDefinition Height="207*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0">
+                            <Label Margin="10,10,10,0">Вопрос:</Label>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox x:Name="questionsComboBox" 
+                                      Margin="10"
+                                      StaysOpenOnEdit="True" 
+                                      IsTextSearchEnabled="False"
+                                      IsEditable="True" 
+                                      BorderThickness="1,1,1,1"
+                                          ItemsSource="{Binding QuestionsDataContext.SearchListBySubstring}"
+                                          SelectedItem="{Binding QuestionsDataContext.SelectedItem}"
+                                          Text="{Binding QuestionsDataContext.Combobox_text}"></ComboBox>
+                                <Button Grid.Column="1" Margin="10" Command="{Binding AddQuestionCommand}">
+                                    <TextBlock Style="{StaticResource headerTextBlock}">
+                                    +
+                                    </TextBlock>
+                                </Button>
+                            </Grid>
+                            <Label Margin="10,0,10,0">Ответ:</Label>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox x:Name="answersComboBox" 
+                                      Margin="10"
+                                      StaysOpenOnEdit="True" 
+                                      IsTextSearchEnabled="False"
+                                      IsEditable="True" 
+                                      BorderThickness="1,1,1,1"
+                                          ItemsSource="{Binding AnswerDataContext.SearchListBySubstring}"
+                                          SelectedItem="{Binding AnswerDataContext.SelectedItem}"
+                                          Text="{Binding AnswerDataContext.Combobox_text}"></ComboBox>
+                                <Button Grid.Column="1" Margin="10" Command="{Binding AddAnswerCommand}">
+                                    <TextBlock Style="{StaticResource headerTextBlock}">
+                                    +
+                                    </TextBlock>
+                                </Button>
+                            </Grid>
+                            <Button Margin="10,10,10,10">
+                                <TextBlock Style="{StaticResource headerTextBlock}">
+                                    ↓ Добавить к вопросам и ответам диагноза ↓
+                                </TextBlock>
+                            </Button>
+                        </StackPanel>
+                        <ListView Grid.Row="1" Margin="10,20,10,20" ItemsSource="{Binding QuestionOnAnswers}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Вопрос" DisplayMemberBinding="{Binding question_text}"/>
+                                    <GridViewColumn Header="Ответ" DisplayMemberBinding="{Binding answer_text}"/>
+                                    <GridViewColumn Width="100" Header="Редактировать">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button>Редактировать</Button>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Width="100" Header="Удалить">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button>Удалить</Button>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Числовые индикаторы" BorderBrush="#434343"></TabItem>
+                <TabItem Header="Перечислимые индикаторы" BorderBrush="#434343"></TabItem>
+                <TabItem Header="Визуальные проявления" BorderBrush="#434343"></TabItem>
+            </TabControl>
+        </Grid>
+    </Grid>
+</Window>

@@ -44,10 +44,10 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Style="{StaticResource baseButton}" Height="auto" Grid.Column="0" Margin="0,0,5,5">
+                <Button Click="Button_Click" Style="{StaticResource baseButton}" Height="auto" Grid.Column="0" Margin="0,0,5,5">
                     <TextBlock Style="{StaticResource menuButtonText}">Начать с этим диагнозом</TextBlock>
                 </Button>
-                <Button Style="{StaticResource baseButton}" Height="auto" Grid.Column="1" Margin="5,0,0,5">
+                <Button Click="Button_Click" Style="{StaticResource baseButton}" Height="auto" Grid.Column="1" Margin="5,0,0,5">
                     <TextBlock Style="{StaticResource menuButtonText}">Начать без диагноза</TextBlock>
                 </Button>
             </Grid>
