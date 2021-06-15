@@ -15,6 +15,7 @@ namespace foreversick_workstationWPF.ViewModel
 {
     public class DataContext : INotifyPropertyChanged
     {
+        #region contexts
         public ComboBoxDataContext<Question> QuestionsDataContext { get; set; } = new(QuestionList.GetQuestionsListAsync,
                                                                 "GameContext/QuestionsBySubstring/",
                                                                 "Не удалось загрузить список вопросов. Проверьте подключение к интернету и повторите попытку.");
@@ -25,13 +26,20 @@ namespace foreversick_workstationWPF.ViewModel
                                                                 "GameContext/DiagnosesBySubstring/",
                                                                 "Не удалось загрузить список диагнозов. Проверьте подключение к интернету и повторите попытку.");
 
-
+        #endregion
+       
         public DataContext()
         {
             DiagnosisDataContext.SelectedItemChanged += (sender, e)=> SelectedDiagnosisChanged(sender, e);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #region add buttons for questions and answers
         ICommand addQuestionCommand;
         public ICommand AddQuestionCommand
         {
@@ -76,6 +84,48 @@ namespace foreversick_workstationWPF.ViewModel
                 return addAnswerCommand;
             }
         }
+        ICommand addAnswerAndQuestionToDiagnosis;
+        public ICommand AddAnswerAndQuestionToDiagnosis
+        {
+            get
+            {
+                addAnswerAndQuestionToDiagnosis = new RelayCommand(obj =>
+                {
+                    AddingAnswerAndQuestionToDiagnosis();
+                });
+                return addAnswerAndQuestionToDiagnosis;
+            }
+        }
+        async void AddingAnswerAndQuestionToDiagnosis()
+        {
+            Diagnosis current_duagnosis = DiagnosisDataContext.SelectedItem;
+            Answer current_answer = AnswersDataContext.SelectedItem;
+            Question current_question = QuestionsDataContext.SelectedItem;
+            if (current_duagnosis != null
+                && current_answer != null
+                && current_question != null)
+            {
+                int result = await QuestionOnAnswerList.PostAnswerOnQuestionForDiagnosis("GameContext/DiagnosisQuestionAnswer/",
+                                                                            current_duagnosis.id,
+                                                                            current_answer.id,
+                                                                            current_question.id);
+                if (result > 0)
+                    questionOnAnswers.Add(new(current_question.id, current_question.question_text, current_answer.id, current_answer.answer_text));
+                else
+                    MessageBox.Show("Что-то не работает на этапе добавления ответа на вопрос для диагноза, сервер ответил не 1");
+
+            }
+            else MessageBox.Show
+                    ((current_duagnosis == null ? "Диагноз не выбран.\n" : "")
+                   + (current_answer == null ? "Ответ не выбран.\n" : "")
+                   + (current_question == null ? "Вопрос не выбран.\n" : ""));
+        }
+
+        #endregion
+       
+        /// <summary>
+        /// Вызывается при изменении диагноза. Тут происходит инициализация табличек сущностей и предложений пользователей
+        /// </summary>
         void SelectedDiagnosisChanged(object sender, EventArgs e)
         {
             //MessageBox.Show("SelectedDiagnosisChanged говорит, что DiagnosisDataContext.SelectedItem сменилось на "
@@ -87,17 +137,7 @@ namespace foreversick_workstationWPF.ViewModel
             }
         }
 
-        void SelectedQuestionChanged()
-        {
-
-        }
-
-        void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-
+        #region user suggestion listview handling
         ObservableCollection<UserSuggestion> userSuggestions = new();
         public ObservableCollection<UserSuggestion> UserSuggestions
         {
@@ -130,9 +170,9 @@ namespace foreversick_workstationWPF.ViewModel
             }
         }
 
+        #endregion
+
         ObservableCollection<QuestionOnAnswer> questionOnAnswers = new();
-
-
         public ObservableCollection<QuestionOnAnswer> QuestionOnAnswers
         {
             get
