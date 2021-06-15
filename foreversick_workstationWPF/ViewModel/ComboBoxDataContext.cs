@@ -9,7 +9,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace foreversick_workstationWPF
+namespace foreversick_workstationWPF.ViewModel
 {
     public class ComboBoxDataContext<T> : INotifyPropertyChanged where T : IEquatable<T>
     {

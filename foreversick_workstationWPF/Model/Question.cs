@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 
-namespace foreversick_workstationWPF
+namespace foreversick_workstationWPF.Model
 {
     [Serializable]
     public class QuestionList
@@ -55,6 +58,40 @@ namespace foreversick_workstationWPF
         {
             return (other!=null) && id == other.id;
         }
+
+        /// <summary>
+        /// Добавляет новый вопрос
+        /// </summary>
+        /// <param name="text">Текст вопроса</param>
+        /// <param name="path">Адрес, например, GameContext/Question/</param>
+        /// <returns></returns>
+        public static async Task<int> AddQuestion(string text, string path)
+        {
+            int result = -1;
+            Question new_question = new(0, text);
+            WebRequest request = WebRequest.Create(App.HOST_URL + path);
+            request.Method = "POST";
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+                WriteIndented = true
+            };
+            string result_stringJSON = JsonSerializer.Serialize<Question>(new_question, options);
+            byte[] byteArray = Encoding.UTF8.GetBytes(result_stringJSON);
+            request.ContentLength = byteArray.Length;
+            request.ContentType = "application/json; charset = UTF-8";
+            Stream dataStream = request.GetRequestStream();
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            dataStream.Close();
+            WebResponse response = await request.GetResponseAsync();
+            using Stream dataStreamResponse = response.GetResponseStream();
+            StreamReader reader = new(dataStreamResponse);
+            if (!int.TryParse(reader.ReadToEnd(), out result))
+                result = -1;
+            reader.Close();
+            dataStreamResponse.Close();
+            return result;
+        }
     }
 
     [Serializable]
@@ -103,6 +140,40 @@ namespace foreversick_workstationWPF
         public bool Equals(Answer other)
         {
             return (other != null) && id == other.id;
+        }
+
+        /// <summary>
+        /// Добавляет новый ответ
+        /// </summary>
+        /// <param name="text">Текст ответ</param>
+        /// <param name="path">Адрес, например, GameContext/Answer/</param>
+        /// <returns></returns>
+        public static async Task<int> AddAnswer(string text, string path)
+        {
+            int result = -1;
+            Answer new_answer = new(0, text);
+            WebRequest request = WebRequest.Create(App.HOST_URL + path);
+            request.Method = "POST";
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+                WriteIndented = true
+            };
+            string result_stringJSON = JsonSerializer.Serialize<Answer>(new_answer, options);
+            byte[] byteArray = Encoding.UTF8.GetBytes(result_stringJSON);
+            request.ContentLength = byteArray.Length;
+            request.ContentType = "application/json; charset = UTF-8";
+            Stream dataStream = request.GetRequestStream();
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            dataStream.Close();
+            WebResponse response = await request.GetResponseAsync();
+            using Stream dataStreamResponse = response.GetResponseStream();
+            StreamReader reader = new(dataStreamResponse);
+            if (!int.TryParse(reader.ReadToEnd(), out result))
+                result = -1;
+            reader.Close();
+            dataStreamResponse.Close();
+            return result;
         }
     }
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 
-namespace foreversick_workstationWPF
+namespace foreversick_workstationWPF.Model
 {
     [Serializable]
     public class UserSuggestionList

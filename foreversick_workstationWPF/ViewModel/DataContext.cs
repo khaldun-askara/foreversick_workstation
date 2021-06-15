@@ -9,9 +9,9 @@ using System.Windows;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
-using foreversick_workstationWPF.ViewModel;
+using foreversick_workstationWPF.Model;
 
-namespace foreversick_workstationWPF
+namespace foreversick_workstationWPF.ViewModel
 {
     public class DataContext : INotifyPropertyChanged
     {
@@ -39,7 +39,12 @@ namespace foreversick_workstationWPF
             {
                 addQuestionCommand = new RelayCommand(obj =>
                     {
-                        AddingQuesOrAnsContext<Question> addingFormContext = new(AddedType.Question, QuestionsDataContext.Combobox_text);
+                        AddingQuesOrAnsContext<Question> addingFormContext = new(AddedType.Question, 
+                                                                                 QuestionsDataContext.Combobox_text,
+                                                                                 Question.AddQuestion,
+                                                                                 "GameContext/Question/",
+                                                                                 QuestionList.GetQuestionsListAsync,
+                                                                                 "GameContext/QuestionsBySubstring/");
                         AddingQuestion addingQuestionForm = new()
                         {
                             DataContext = addingFormContext
@@ -56,7 +61,12 @@ namespace foreversick_workstationWPF
             {
                 addAnswerCommand = new RelayCommand(obj =>
                     {
-                        AddingQuesOrAnsContext<Question> addingFormContext = new(AddedType.Answer, AnswersDataContext.Combobox_text);
+                        AddingQuesOrAnsContext<Answer> addingFormContext = new(AddedType.Answer, 
+                                                                                 AnswersDataContext.Combobox_text, 
+                                                                                 Answer.AddAnswer,
+                                                                                 "GameContext/Answer/",
+                                                                                 AnswerList.GetAnswersListAsync,
+                                                                                 "GameContext/AnswersBySubstring/");
                         AddingQuestion addingQuestionForm = new()
                         {
                             DataContext = addingFormContext

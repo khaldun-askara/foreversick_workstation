@@ -8,7 +8,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace foreversick_workstationWPF
+namespace foreversick_workstationWPF.Model
 {
     [Serializable]
     public class DiagnosisList

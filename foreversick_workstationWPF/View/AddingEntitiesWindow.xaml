@@ -3,11 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:foreversick_workstationWPF"
+        xmlns:local="clr-namespace:foreversick_workstationWPF" xmlns:viewmodel="clr-namespace:foreversick_workstationWPF.ViewModel"
         mc:Ignorable="d"
         Title="Добавление информации о диагнозах" Height="800" Width="1200" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
-        <local:DataContext/>
+        <viewmodel:DataContext/>
     </Window.DataContext>
     <Grid Margin="2,0,-2,0">
         <Grid.RowDefinitions>
@@ -116,9 +116,9 @@
                                       IsTextSearchEnabled="False"
                                       IsEditable="True" 
                                       BorderThickness="1,1,1,1"
-                                          ItemsSource="{Binding AnswerDataContext.SearchListBySubstring}"
-                                          SelectedItem="{Binding AnswerDataContext.SelectedItem}"
-                                          Text="{Binding AnswerDataContext.Combobox_text}"></ComboBox>
+                                          ItemsSource="{Binding AnswersDataContext.SearchListBySubstring}"
+                                          SelectedItem="{Binding AnswersDataContext.SelectedItem}"
+                                          Text="{Binding AnswersDataContext.Combobox_text}"></ComboBox>
                                 <Button Grid.Column="1" Margin="10" Command="{Binding AddAnswerCommand}">
                                     <TextBlock Style="{StaticResource headerTextBlock}">
                                     +
