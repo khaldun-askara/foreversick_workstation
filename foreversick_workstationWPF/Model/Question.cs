@@ -65,7 +65,7 @@ namespace foreversick_workstationWPF.Model
         /// <param name="text">Текст вопроса</param>
         /// <param name="path">Адрес, например, GameContext/Question/</param>
         /// <returns></returns>
-        public static async Task<int> AddQuestion(string text, string path)
+        public static async Task<int> PostQuestion(string text, string path)
         {
             int result = -1;
             Question new_question = new(0, text);
@@ -148,7 +148,7 @@ namespace foreversick_workstationWPF.Model
         /// <param name="text">Текст ответ</param>
         /// <param name="path">Адрес, например, GameContext/Answer/</param>
         /// <returns></returns>
-        public static async Task<int> AddAnswer(string text, string path)
+        public static async Task<int> PostAnswer(string text, string path)
         {
             int result = -1;
             Answer new_answer = new(0, text);
@@ -219,6 +219,39 @@ namespace foreversick_workstationWPF.Model
             AswersAndQuestions = JsonSerializer.Deserialize<QuestionOnAnswerList>(AswersAndQuestionsJSON).questionsOnAnswer;
             response.Close();
             return AswersAndQuestions;
+        }
+
+        public static async Task<int> PostAnswerOnQuestionForDiagnosis(string path, int diagnosis_id, int answer_id, int question_id)
+        {
+            int result = -1;
+            answers_questions_for_diagnosesString new_answer = new()
+            {
+                diagnosis_id = diagnosis_id,
+                answer_id = answer_id,
+                question_id = question_id
+            };
+            WebRequest request = WebRequest.Create(App.HOST_URL + path);
+            request.Method = "POST";
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+                WriteIndented = true
+            };
+            string result_stringJSON = JsonSerializer.Serialize<answers_questions_for_diagnosesString>(new_answer, options);
+            byte[] byteArray = Encoding.UTF8.GetBytes(result_stringJSON);
+            request.ContentLength = byteArray.Length;
+            request.ContentType = "application/json; charset = UTF-8";
+            Stream dataStream = request.GetRequestStream();
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            dataStream.Close();
+            WebResponse response = await request.GetResponseAsync();
+            using Stream dataStreamResponse = response.GetResponseStream();
+            StreamReader reader = new(dataStreamResponse);
+            if (!int.TryParse(reader.ReadToEnd(), out result))
+                result = -1;
+            reader.Close();
+            dataStreamResponse.Close();
+            return result;
         }
     }
     [Serializable]

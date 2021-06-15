@@ -41,7 +41,7 @@ namespace foreversick_workstationWPF.ViewModel
                     {
                         AddingQuesOrAnsContext<Question> addingFormContext = new(AddedType.Question, 
                                                                                  QuestionsDataContext.Combobox_text,
-                                                                                 Question.AddQuestion,
+                                                                                 Question.PostQuestion,
                                                                                  "GameContext/Question/",
                                                                                  QuestionList.GetQuestionsListAsync,
                                                                                  "GameContext/QuestionsBySubstring/");
@@ -63,7 +63,7 @@ namespace foreversick_workstationWPF.ViewModel
                     {
                         AddingQuesOrAnsContext<Answer> addingFormContext = new(AddedType.Answer, 
                                                                                  AnswersDataContext.Combobox_text, 
-                                                                                 Answer.AddAnswer,
+                                                                                 Answer.PostAnswer,
                                                                                  "GameContext/Answer/",
                                                                                  AnswerList.GetAnswersListAsync,
                                                                                  "GameContext/AnswersBySubstring/");
