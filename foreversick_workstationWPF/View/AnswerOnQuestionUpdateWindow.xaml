@@ -1,0 +1,69 @@
+﻿<Window x:Class="foreversick_workstationWPF.View.AnswerOnQuestionUpdateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:foreversick_workstationWPF.View"
+        xmlns:xc="clr-namespace:foreversick_workstationWPF.ViewModel"
+        xc:DialogCloser.DialogResult="{Binding DialogResult}"
+        mc:Ignorable="d"
+        Title="Изменение ответа на вопрос для диагноза" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <StackPanel VerticalAlignment="Center">
+            <Label Margin="10,10,10,0">Вопрос:</Label>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="9*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox x:Name="questionsComboBox" 
+                                      Margin="10"
+                                      StaysOpenOnEdit="True" 
+                                      IsTextSearchEnabled="False"
+                                      IsEditable="True" 
+                                      BorderThickness="1,1,1,1"
+                                          ItemsSource="{Binding QuestionsDataContext.SearchListBySubstring}"
+                                          SelectedItem="{Binding QuestionsDataContext.SelectedItem}"
+                                          Text="{Binding QuestionsDataContext.Combobox_text}"></ComboBox>
+                <Button Grid.Column="1" Margin="10" Command="{Binding AddQuestionCommand}">
+                    <TextBlock Style="{StaticResource headerTextBlock}">
+                                    +
+                    </TextBlock>
+                </Button>
+            </Grid>
+            <Label Margin="10,0,10,0">Ответ:</Label>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="9*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox x:Name="answersComboBox" 
+                                      Margin="10"
+                                      StaysOpenOnEdit="True" 
+                                      IsTextSearchEnabled="False"
+                                      IsEditable="True" 
+                                      BorderThickness="1,1,1,1"
+                                          ItemsSource="{Binding AnswersDataContext.SearchListBySubstring}"
+                                          SelectedItem="{Binding AnswersDataContext.SelectedItem}"
+                                          Text="{Binding AnswersDataContext.Combobox_text}"></ComboBox>
+                <Button Grid.Column="1" Margin="10" Command="{Binding AddAnswerCommand}">
+                    <TextBlock Style="{StaticResource headerTextBlock}">
+                                    +
+                    </TextBlock>
+                </Button>
+            </Grid>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Margin="20" Padding="10" Command="{Binding AddButtonCommand}">
+                    <Button.Content>
+                        <TextBlock Style="{StaticResource baseTextBlock}" Text="Изменить"/>
+                    </Button.Content>
+                </Button>
+                <Button Margin="20" Padding="10" Command="{Binding CancelButtonCommand}">
+                    <Button.Content>
+                        <TextBlock Style="{StaticResource baseTextBlock}" Text="Отмена"/>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
