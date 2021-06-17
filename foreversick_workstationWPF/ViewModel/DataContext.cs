@@ -28,9 +28,24 @@ namespace foreversick_workstationWPF.ViewModel
 
         #endregion
        
+        // дурашка, это конструктор
         public DataContext()
         {
+            // эта строчка нужна, чтобы подписаться на изменение диагноза и обрабатывать это в SelectedDiagnosisChanged
             DiagnosisDataContext.SelectedItemChanged += (sender, e)=> SelectedDiagnosisChanged(sender, e);
+        }
+        /// <summary>
+        /// Вызывается при изменении диагноза. Тут происходит инициализация табличек сущностей и предложений пользователей
+        /// </summary>
+        void SelectedDiagnosisChanged(object sender, EventArgs e)
+        {
+            //MessageBox.Show("SelectedDiagnosisChanged говорит, что DiagnosisDataContext.SelectedItem сменилось на "
+            //    + ((DiagnosisDataContext.SelectedItem != null) ? DiagnosisDataContext.SelectedItem.ToString() : "null"));
+            if (DiagnosisDataContext.SelectedItem != null)
+            {
+                GetSuggestionsForDiagnosis(DiagnosisDataContext.SelectedItem.id);
+                GetAswersAndQuestionsForDiagnosis(DiagnosisDataContext.SelectedItem.id);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -148,20 +163,60 @@ namespace foreversick_workstationWPF.ViewModel
         }
 
         #endregion
-       
-        /// <summary>
-        /// Вызывается при изменении диагноза. Тут происходит инициализация табличек сущностей и предложений пользователей
-        /// </summary>
-        void SelectedDiagnosisChanged(object sender, EventArgs e)
+
+        #region answer on question for diagnosis listview buttons handling
+        ICommand editAQCommand;
+        public ICommand EditAQCommand
         {
-            //MessageBox.Show("SelectedDiagnosisChanged говорит, что DiagnosisDataContext.SelectedItem сменилось на "
-            //    + ((DiagnosisDataContext.SelectedItem != null) ? DiagnosisDataContext.SelectedItem.ToString() : "null"));
-            if (DiagnosisDataContext.SelectedItem != null)
+            get
             {
-                GetSuggestionsForDiagnosis(DiagnosisDataContext.SelectedItem.id);
-                GetAswersAndQuestionsForDiagnosis(DiagnosisDataContext.SelectedItem.id);
+                editAQCommand = new RelayCommand(obj =>
+                {
+                    QuestionOnAnswer current_pair = obj as QuestionOnAnswer;
+                    if (current_pair != null)
+                        MessageBox.Show("Измение!!!\nВопрос: " + current_pair.question_text + "\nОтвет: " + current_pair.answer_text);
+                    else
+                        MessageBox.Show("editAQCommand говорит, что что-то не так");
+                });
+                return editAQCommand;
             }
         }
+
+        ICommand deleteAQCommand;
+        public ICommand DeleteAQCommand
+        {
+            get
+            {
+                deleteAQCommand = new RelayCommand(obj =>
+                {
+                    QuestionOnAnswer current_pair = obj as QuestionOnAnswer;
+                    MessageBoxResult dialog_result = MessageBox.Show("Вы уверены, что хотите удалить следующую запись:\nВопрос: \"" 
+                        + current_pair.question_text + "\"\nОтвет: \"" + current_pair.answer_text 
+                        + "\"\nдля диагноза \""+DiagnosisDataContext.SelectedItem+"\"", "Удаление записи", MessageBoxButton.YesNo);
+                    if (dialog_result == MessageBoxResult.Yes)
+                    {
+                        try
+                        {
+                            QuestionOnAnswerList.DeleteAnswerOnQuestionForDiagnosis("GameContext/AnswerOnQuestionDelete/",
+                                                                                    DiagnosisDataContext.SelectedItem.id,
+                                                                                    current_pair.question_id);
+                        }
+                        catch(Exception e)
+                        {
+                            MessageBox.Show("Не удалось удалить. Ошибка: " + e.Message);
+                        }
+                        questionOnAnswers.Remove(current_pair);
+                    }
+
+                    //if (current_pair != null)
+                    //    MessageBox.Show("Удаление!!!\nВопрос: " + current_pair.question_text + "\nОтвет: " + current_pair.answer_text);
+                    //else
+                    //    MessageBox.Show("deleteAQCommand говорит, что что-то не так");
+                });
+                return deleteAQCommand;
+            }
+        }
+        #endregion
 
         #region user suggestion listview handling
         ObservableCollection<UserSuggestion> userSuggestions = new();

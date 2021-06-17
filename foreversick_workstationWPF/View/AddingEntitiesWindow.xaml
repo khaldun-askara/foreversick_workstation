@@ -139,14 +139,20 @@
                                     <GridViewColumn Width="100" Header="Редактировать">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <Button>Редактировать</Button>
+                                                <Button Command="{Binding Path=DataContext.EditAQCommand, 
+                                                                          RelativeSource= {RelativeSource FindAncestor, 
+                                                                          AncestorType={x:Type ItemsControl}}}"
+                                                        CommandParameter="{Binding}">Редактировать</Button>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
                                     <GridViewColumn Width="100" Header="Удалить">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <Button>Удалить</Button>
+                                                <Button Command="{Binding Path=DataContext.DeleteAQCommand, 
+                                                                          RelativeSource= {RelativeSource FindAncestor, 
+                                                                          AncestorType={x:Type ItemsControl}}}"
+                                                        CommandParameter="{Binding}">Удалить</Button>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
