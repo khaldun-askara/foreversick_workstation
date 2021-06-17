@@ -109,6 +109,22 @@ namespace foreversick_workstationWPF.ViewModel
                 && current_answer != null
                 && current_question != null)
             {
+                bool isExists = true;
+                try
+                {
+                    isExists = await QuestionOnAnswerList.DiagnosisQuestionValidation("GameContext/DiagnosisQuestionValidation/",
+                                                                                      current_duagnosis.id,
+                                                                                      current_question.id);
+                }
+                catch(Exception e)
+                {
+                    MessageBox.Show("Не удалось проверить уникальность пары диагноз-вопрос. Попробуйте ещё раз. Ошибка: " + e.Message);
+                }
+                if (isExists)
+                {
+                    MessageBox.Show("Не удалось добавить ответ на вопрос к диагнозу. Этот вопрос уже указан для диагноза.");
+                    return;
+                }
                 try
                 {
                      int result = await QuestionOnAnswerList.PostAnswerOnQuestionForDiagnosis("GameContext/DiagnosisQuestionAnswer/",

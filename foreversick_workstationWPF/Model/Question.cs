@@ -253,6 +253,23 @@ namespace foreversick_workstationWPF.Model
             dataStreamResponse.Close();
             return result;
         }
+
+        /// <summary>
+        /// Проверка существования пары диагноз-вопрос
+        /// </summary>
+        /// <param name="path">Адрес</param>
+        /// <returns>Возвращает true, если пара диагноз-вопрос есть, false, если ещё нет</returns>
+        public static async Task<bool> DiagnosisQuestionValidation(string path, int diagnosis_id, int question_id)
+        {
+            int res = 1;
+            WebRequest request = WebRequest.Create(App.HOST_URL + path + diagnosis_id+"-"+question_id);
+            WebResponse response = await request.GetResponseAsync();
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new(stream))
+                int.TryParse(reader.ReadToEnd(), out res);
+            response.Close();
+            return res > 0;
+        }
     }
     [Serializable]
     public class answers_questions_for_diagnosesString
