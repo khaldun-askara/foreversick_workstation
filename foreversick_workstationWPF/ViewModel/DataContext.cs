@@ -96,6 +96,10 @@ namespace foreversick_workstationWPF.ViewModel
                 return addAnswerAndQuestionToDiagnosis;
             }
         }
+        /// <summary>
+        /// Перед добавлением ответа на вопрос к диагнозу производится проверка
+        /// заполнения полей: если какой-то комбобокс не выбран, то об этом выйдет сообщение
+        /// </summary>
         async void AddingAnswerAndQuestionToDiagnosis()
         {
             Diagnosis current_duagnosis = DiagnosisDataContext.SelectedItem;
@@ -105,15 +109,21 @@ namespace foreversick_workstationWPF.ViewModel
                 && current_answer != null
                 && current_question != null)
             {
-                int result = await QuestionOnAnswerList.PostAnswerOnQuestionForDiagnosis("GameContext/DiagnosisQuestionAnswer/",
+                try
+                {
+                     int result = await QuestionOnAnswerList.PostAnswerOnQuestionForDiagnosis("GameContext/DiagnosisQuestionAnswer/",
                                                                             current_duagnosis.id,
                                                                             current_answer.id,
                                                                             current_question.id);
-                if (result > 0)
-                    questionOnAnswers.Add(new(current_question.id, current_question.question_text, current_answer.id, current_answer.answer_text));
-                else
-                    MessageBox.Show("Что-то не работает на этапе добавления ответа на вопрос для диагноза, сервер ответил не 1");
-
+                    if (result > 0)
+                        questionOnAnswers.Add(new(current_question.id, current_question.question_text, current_answer.id, current_answer.answer_text));
+                    else
+                        MessageBox.Show("Не удалось добавить ответ на вопрос к диагнозу. Попробуйте ещё раз.");
+                }
+                catch(Exception e)
+                {
+                    MessageBox.Show("Не удалось добавить ответ на вопрос к диагнозу. Попробуйте ещё раз. Ошибка: " + e.Message);
+                }
             }
             else MessageBox.Show
                     ((current_duagnosis == null ? "Диагноз не выбран.\n" : "")

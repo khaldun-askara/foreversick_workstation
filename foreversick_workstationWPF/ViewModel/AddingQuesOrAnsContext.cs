@@ -101,13 +101,36 @@ namespace foreversick_workstationWPF.ViewModel
 
         public Action Close { get; set; }
 
+        /// <summary>
+        /// Проверка поля с вопросом/ответом Name на пустоту, на существование в бд, затем отправка.
+        /// </summary>
         async void Adding()
         {
-            if (!string.IsNullOrWhiteSpace(Name) && await NameValidation())
+            if (!string.IsNullOrWhiteSpace(Name))
             {
-                int result = await addingQuesOrAnsFunctionAsync(Name, adding_path);
-                DialogResult = result != -1;
-                Close?.Invoke();
+                bool is_name_valid = false;
+                try
+                {
+                    is_name_valid = await NameValidation();
+                }
+                catch(Exception e)
+                {
+                    MessageBox.Show("Не удалось проверить "+ quesOrAnsWord + " на корректность. Попробуйте ещё раз. Ошибка: " + e.Message);
+                }
+                if (is_name_valid)
+                {
+                    int result = -1;
+                    try
+                    {
+                        result = await addingQuesOrAnsFunctionAsync(Name, adding_path);
+                    }
+                    catch(Exception e)
+                    {
+                        MessageBox.Show("Не удалось отправить " + quesOrAnsWord + ". Попробуйте ещё раз. Ошибка: " + e.Message);
+                    }
+                    DialogResult = result != -1;
+                    Close?.Invoke();
+                }
             }
             else
             {
