@@ -88,8 +88,8 @@
                 <TabItem Header="Вопросы и ответы" BorderBrush="#434343">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="107*"/>
-                            <RowDefinition Height="207*"/>
+                            <RowDefinition/>
+                            <RowDefinition/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0">
                             <Label Margin="10,10,10,0">Вопрос:</Label>
@@ -143,12 +143,20 @@
                         <ListView Grid.Row="1" Margin="10,20,10,20" ItemsSource="{Binding QuestionOnAnswers}">
                             <ListView.View>
                                 <GridView>
+                                    <GridView.ColumnHeaderContainerStyle>
+                                        <Style>
+                                            <Setter Property="TextElement.Foreground" Value="#434343" />
+                                            <Setter Property="TextElement.FontFamily" Value="Roboto Light"/>
+                                            <Setter Property="TextElement.FontSize" Value="14" />
+                                        </Style>
+                                    </GridView.ColumnHeaderContainerStyle>
                                     <GridViewColumn Header="Вопрос" DisplayMemberBinding="{Binding question_text}"/>
                                     <GridViewColumn Header="Ответ" DisplayMemberBinding="{Binding answer_text}"/>
-                                    <GridViewColumn Width="100" Header="Редактировать">
+                                    <GridViewColumn Width="120" Header="Редактировать">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <Button Command="{Binding Path=DataContext.EditAQCommand, 
+                                                <Button HorizontalAlignment="Stretch"
+                                                        Command="{Binding Path=DataContext.EditAQCommand, 
                                                                           RelativeSource= {RelativeSource FindAncestor, 
                                                                           AncestorType={x:Type ItemsControl}}}"
                                                         CommandParameter="{Binding}">Редактировать</Button>
@@ -170,8 +178,185 @@
                         </ListView>
                     </Grid>
                 </TabItem>
-                <TabItem Header="Числовые индикаторы" BorderBrush="#434343"></TabItem>
-                <TabItem Header="Перечислимые индикаторы" BorderBrush="#434343"></TabItem>
+                <TabItem Header="Числовые индикаторы" BorderBrush="#434343">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0">
+                            <Label Margin="10,10,10,0">Числовой индикатор:</Label>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox x:Name="numerical_indicatorsComboBox" 
+                                      Margin="10"
+                                      StaysOpenOnEdit="True" 
+                                      IsTextSearchEnabled="False"
+                                      IsEditable="True" 
+                                      BorderThickness="1,1,1,1"
+                                          ItemsSource="{Binding AAAAAAAAA}"
+                                          SelectedItem="{Binding AAAAAAAAA}"
+                                          Text="{Binding AAAAAAAAA}"></ComboBox>
+                                <Button Grid.Column="1" Margin="10" Command="{Binding AAAAAAAAA}">
+                                    <TextBlock Style="{StaticResource headerTextBlock}">
+                                    +
+                                    </TextBlock>
+                                </Button>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <Label Margin="10,0,0,0" FontSize="16">Минимальное значение при диагнозе:</Label>
+                                    <TextBox Margin="10"></TextBox>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <Label Margin="10,0,0,0" FontSize="16">Максимальное значение при диагнозе:</Label>
+                                    <TextBox Margin="10" ></TextBox>
+                                </StackPanel>
+                            </Grid>
+                            <Button Margin="10,10,10,10" Command="{Binding AAAAAAAA}">
+                                <TextBlock Style="{StaticResource headerTextBlock}">
+                                    ↓ Добавить к числовым индикаторам диагноза ↓
+                                </TextBlock>
+                            </Button>
+                        </StackPanel>
+                        <ListView Grid.Row="1" Margin="10,20,10,20" ItemsSource="{Binding AAAAAA}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridView.ColumnHeaderContainerStyle>
+                                        <Style>
+                                            <Setter Property="TextElement.Foreground" Value="#434343" />
+                                            <Setter Property="TextElement.FontFamily" Value="Roboto Light"/>
+                                            <Setter Property="TextElement.FontSize" Value="14" />
+                                        </Style>
+                                    </GridView.ColumnHeaderContainerStyle>
+                                    <GridViewColumn Header="Индикатор" DisplayMemberBinding="{Binding AAAAAAAAAAA}"/>
+                                    <GridViewColumn Header="Мин" DisplayMemberBinding="{Binding AAAAAAAA}"/>
+                                    <GridViewColumn Header="Макс" DisplayMemberBinding="{Binding AAAAAAAA}"/>
+                                    <GridViewColumn Width="120" Header="Редактировать">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Command="{Binding Path=DataContext.AAAAAAAAAAAA, 
+                                                                          RelativeSource= {RelativeSource FindAncestor, 
+                                                                          AncestorType={x:Type ItemsControl}}}"
+                                                        CommandParameter="{Binding}">Редактировать</Button>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Width="100" Header="Удалить">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Command="{Binding Path=DataContext.AAAAAAAAA, 
+                                                                          RelativeSource= {RelativeSource FindAncestor, 
+                                                                          AncestorType={x:Type ItemsControl}}}"
+                                                        CommandParameter="{Binding}">Удалить</Button>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Перечислимые индикаторы" BorderBrush="#434343">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0">
+                            <Label Margin="10,10,10,0">Перечислимый индикатор:</Label>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox x:Name="enum_indicatorsComboBox" 
+                                      Margin="10"
+                                      StaysOpenOnEdit="True" 
+                                      IsTextSearchEnabled="False"
+                                      IsEditable="True" 
+                                      BorderThickness="1,1,1,1"
+                                          ItemsSource="{Binding ААААААААААААААААААААААА}"
+                                          SelectedItem="{Binding ААААААААААА}"
+                                          Text="{Binding АААААААААААААААА}"></ComboBox>
+                                <Button Grid.Column="1" Margin="10" Command="{Binding АААААААААААА}">
+                                    <TextBlock Style="{StaticResource headerTextBlock}">
+                                    +
+                                    </TextBlock>
+                                </Button>
+                            </Grid>
+                            <Label Margin="10,0,10,0">Ответ:</Label>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox x:Name="enum_valuesComboBox" 
+                                      Margin="10"
+                                      StaysOpenOnEdit="True" 
+                                      IsTextSearchEnabled="False"
+                                      IsEditable="True" 
+                                      BorderThickness="1,1,1,1"
+                                          ItemsSource="{Binding AAAAAAAAAAAAAAAAAAAA}"
+                                          SelectedItem="{Binding AAAAAAAAAAAAAAAAAAAAAA}"
+                                          Text="{Binding AAAAAAAAAAAAAAAAAAAAAAAAA}"></ComboBox>
+                                <Button Grid.Column="1" Margin="10" Command="{Binding AAAAAAAAAAAAAAAAAAA}">
+                                    <TextBlock Style="{StaticResource headerTextBlock}">
+                                    +
+                                    </TextBlock>
+                                </Button>
+                            </Grid>
+                            <Button Margin="10,10,10,10" Command="{Binding AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA}">
+                                <TextBlock Style="{StaticResource headerTextBlock}">
+                                    ↓ Добавить к перечислимым индикаторам диагноза ↓
+                                </TextBlock>
+                            </Button>
+                        </StackPanel>
+                        <ListView Grid.Row="1" Margin="10,20,10,20" ItemsSource="{Binding AAAAAAAAAAAAAAa}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridView.ColumnHeaderContainerStyle>
+                                        <Style>
+                                            <Setter Property="TextElement.Foreground" Value="#434343" />
+                                            <Setter Property="TextElement.FontFamily" Value="Roboto Light"/>
+                                            <Setter Property="TextElement.FontSize" Value="14" />
+                                        </Style>
+                                    </GridView.ColumnHeaderContainerStyle>
+                                    <GridViewColumn Header="Индикатор" DisplayMemberBinding="{Binding АААААААААААААААААААААААААААААА}"/>
+                                    <GridViewColumn Header="Значение" DisplayMemberBinding="{Binding ААААААААААААААААААААААА}"/>
+                                    <GridViewColumn Width="120" Header="Редактировать">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button HorizontalAlignment="Stretch"
+                                                        Command="{Binding Path=DataContext.АААААААААААААААААААААА, 
+                                                                          RelativeSource= {RelativeSource FindAncestor, 
+                                                                          AncestorType={x:Type ItemsControl}}}"
+                                                        CommandParameter="{Binding}">Редактировать</Button>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Width="100" Header="Удалить">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Command="{Binding Path=DataContext.ААААААААААААААААААА, 
+                                                                          RelativeSource= {RelativeSource FindAncestor, 
+                                                                          AncestorType={x:Type ItemsControl}}}"
+                                                        CommandParameter="{Binding}">Удалить</Button>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
+                </TabItem>
                 <TabItem Header="Визуальные проявления" BorderBrush="#434343"></TabItem>
             </TabControl>
         </Grid>
