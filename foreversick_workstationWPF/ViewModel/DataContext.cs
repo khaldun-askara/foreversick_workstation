@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using foreversick_workstationWPF.Model;
+using foreversick_workstationWPF.View;
+using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Timers;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Collections.ObjectModel;
-using System.Windows.Threading;
-using foreversick_workstationWPF.Model;
 
 namespace foreversick_workstationWPF.ViewModel
 {
@@ -27,12 +22,12 @@ namespace foreversick_workstationWPF.ViewModel
                                                                 "Не удалось загрузить список диагнозов. Проверьте подключение к интернету и повторите попытку.");
 
         #endregion
-       
+
         // дурашка, это конструктор
         public DataContext()
         {
             // эта строчка нужна, чтобы подписаться на изменение диагноза и обрабатывать это в SelectedDiagnosisChanged
-            DiagnosisDataContext.SelectedItemChanged += (sender, e)=> SelectedDiagnosisChanged(sender, e);
+            DiagnosisDataContext.SelectedItemChanged += (sender, e) => SelectedDiagnosisChanged(sender, e);
         }
         /// <summary>
         /// Вызывается при изменении диагноза. Тут происходит инициализация табличек сущностей и предложений пользователей
@@ -55,47 +50,56 @@ namespace foreversick_workstationWPF.ViewModel
         }
 
         #region add buttons for questions and answers
+        /// <summary>
+        /// Генерация (если это можно так назвать, хахах) команды для кнопочки
+        /// </summary>
+        /// <param name="type">Тип формы: про вопросы или про ответы?</param>
+        /// <param name="text">Текст вопроса или ответа, который изначально будет в поле ввода</param>
+        /// <returns>Возвращает команду, которая создаёт окно добавления вопроса или ответа и контекст к нему</returns>
+        public static bool CreateAddAQCommand(AddedType type, string text)
+        {
+            AddingQuesOrAnsContext<Question> addingFormContextQ = new(type,
+                                                                    text,
+                                                                    Question.PostQuestion,
+                                                                    "GameContext/Question/",
+                                                                    QuestionList.GetQuestionsListAsync,
+                                                                    "GameContext/QuestionsBySubstring/");
+            AddingQuesOrAnsContext<Answer> addingFormContextA = new(type,
+                                                                    text,
+                                                                    Answer.PostAnswer,
+                                                                    "GameContext/Answer/",
+                                                                    AnswerList.GetAnswersListAsync,
+                                                                    "GameContext/AnswersBySubstring/");
+            AddingQuestion addingAQForm = new()
+            {
+                DataContext = (type == AddedType.Question) ? addingFormContextQ : addingFormContextA
+            };
+            bool? resultDialog = addingAQForm.ShowDialog();
+            return (resultDialog.HasValue) ? resultDialog.Value : false;
+        }
+
         ICommand addQuestionCommand;
         public ICommand AddQuestionCommand
         {
             get
             {
                 addQuestionCommand = new RelayCommand(obj =>
-                    {
-                        AddingQuesOrAnsContext<Question> addingFormContext = new(AddedType.Question, 
-                                                                                 QuestionsDataContext.Combobox_text,
-                                                                                 Question.PostQuestion,
-                                                                                 "GameContext/Question/",
-                                                                                 QuestionList.GetQuestionsListAsync,
-                                                                                 "GameContext/QuestionsBySubstring/");
-                        AddingQuestion addingQuestionForm = new()
-                        {
-                            DataContext = addingFormContext
-                        };
-                        bool? result = addingQuestionForm.ShowDialog();
-                    });
+                {
+                    CreateAddAQCommand(AddedType.Question, QuestionsDataContext.Combobox_text);
+                });
                 return addQuestionCommand;
             }
         }
+
         ICommand addAnswerCommand;
         public ICommand AddAnswerCommand
         {
             get
             {
                 addAnswerCommand = new RelayCommand(obj =>
-                    {
-                        AddingQuesOrAnsContext<Answer> addingFormContext = new(AddedType.Answer, 
-                                                                                 AnswersDataContext.Combobox_text, 
-                                                                                 Answer.PostAnswer,
-                                                                                 "GameContext/Answer/",
-                                                                                 AnswerList.GetAnswersListAsync,
-                                                                                 "GameContext/AnswersBySubstring/");
-                        AddingQuestion addingQuestionForm = new()
-                        {
-                            DataContext = addingFormContext
-                        };
-                        bool? result = addingQuestionForm.ShowDialog();
-                    });
+                {
+                    CreateAddAQCommand(AddedType.Answer, AnswersDataContext.Combobox_text);
+                });
                 return addAnswerCommand;
             }
         }
@@ -131,7 +135,7 @@ namespace foreversick_workstationWPF.ViewModel
                                                                                       current_duagnosis.id,
                                                                                       current_question.id);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     MessageBox.Show("Не удалось проверить уникальность пары диагноз-вопрос. Попробуйте ещё раз. Ошибка: " + e.Message);
                 }
@@ -142,16 +146,16 @@ namespace foreversick_workstationWPF.ViewModel
                 }
                 try
                 {
-                     int result = await QuestionOnAnswerList.PostAnswerOnQuestionForDiagnosis("GameContext/DiagnosisQuestionAnswer/",
-                                                                            current_duagnosis.id,
-                                                                            current_answer.id,
-                                                                            current_question.id);
+                    int result = await QuestionOnAnswerList.PostAnswerOnQuestionForDiagnosis("GameContext/DiagnosisQuestionAnswer/",
+                                                                           current_duagnosis.id,
+                                                                           current_answer.id,
+                                                                           current_question.id);
                     if (result > 0)
                         questionOnAnswers.Add(new(current_question.id, current_question.question_text, current_answer.id, current_answer.answer_text));
                     else
                         MessageBox.Show("Не удалось добавить ответ на вопрос к диагнозу. Попробуйте ещё раз.");
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     MessageBox.Show("Не удалось добавить ответ на вопрос к диагнозу. Попробуйте ещё раз. Ошибка: " + e.Message);
                 }
@@ -174,9 +178,18 @@ namespace foreversick_workstationWPF.ViewModel
                 {
                     QuestionOnAnswer current_pair = obj as QuestionOnAnswer;
                     if (current_pair != null)
-                        MessageBox.Show("Измение!!!\nВопрос: " + current_pair.question_text + "\nОтвет: " + current_pair.answer_text);
-                    else
-                        MessageBox.Show("editAQCommand говорит, что что-то не так");
+                    {
+                        AnswerOnQuestionUpdateContext answerOnQuestionUpdateContext = new(DiagnosisDataContext.SelectedItem.id,
+                                                                                            new Question(current_pair.question_id, current_pair.question_text),
+                                                                                            new Answer(current_pair.answer_id, current_pair.answer_text));
+                        AnswerOnQuestionUpdateWindow updateAQForm = new()
+                        {
+                            DataContext = answerOnQuestionUpdateContext
+                        };
+                        bool? resultDialog = updateAQForm.ShowDialog();
+                        if (resultDialog.HasValue && resultDialog.Value)
+                            GetAswersAndQuestionsForDiagnosis(DiagnosisDataContext.SelectedItem.id);
+                    }
                 });
                 return editAQCommand;
             }
@@ -190,9 +203,9 @@ namespace foreversick_workstationWPF.ViewModel
                 deleteAQCommand = new RelayCommand(obj =>
                 {
                     QuestionOnAnswer current_pair = obj as QuestionOnAnswer;
-                    MessageBoxResult dialog_result = MessageBox.Show("Вы уверены, что хотите удалить следующую запись:\nВопрос: \"" 
-                        + current_pair.question_text + "\"\nОтвет: \"" + current_pair.answer_text 
-                        + "\"\nдля диагноза \""+DiagnosisDataContext.SelectedItem+"\"", "Удаление записи", MessageBoxButton.YesNo);
+                    MessageBoxResult dialog_result = MessageBox.Show("Вы уверены, что хотите удалить следующую запись:\nВопрос: \""
+                        + current_pair.question_text + "\"\nОтвет: \"" + current_pair.answer_text
+                        + "\"\nдля диагноза \"" + DiagnosisDataContext.SelectedItem + "\"", "Удаление записи", MessageBoxButton.YesNo);
                     if (dialog_result == MessageBoxResult.Yes)
                     {
                         try
@@ -201,7 +214,7 @@ namespace foreversick_workstationWPF.ViewModel
                                                                                     DiagnosisDataContext.SelectedItem.id,
                                                                                     current_pair.question_id);
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
                             MessageBox.Show("Не удалось удалить. Ошибка: " + e.Message);
                         }
@@ -235,11 +248,12 @@ namespace foreversick_workstationWPF.ViewModel
 
         async void GetSuggestionsForDiagnosis(int diagnosis_id)
         {
-            try {
+            try
+            {
                 UserSuggestions = new(await UserSuggestionList.GetSuggestionsForDiagnosis("GameContext/Suggestions/", diagnosis_id));
 
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 MessageBoxResult result = MessageBox.Show(exc.Message + ". Попробовать снова?", "Не удалось загрузить предложения по диагнозу", MessageBoxButton.YesNo);
                 switch (result)
@@ -284,7 +298,5 @@ namespace foreversick_workstationWPF.ViewModel
                 }
             }
         }
-
-        
     }
 }

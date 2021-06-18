@@ -7,7 +7,10 @@
         xmlns:xc="clr-namespace:foreversick_workstationWPF.ViewModel"
         xc:DialogCloser.DialogResult="{Binding DialogResult}"
         mc:Ignorable="d"
-        Title="Изменение ответа на вопрос для диагноза" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+        Title="Изменение ответа на вопрос для диагноза" Height="350" Width="800"
+        WindowStartupLocation="CenterScreen"
+        xmlns:viewmodel="clr-namespace:foreversick_workstationWPF.ViewModel"
+        viewmodel:WindowCloser.EnableWindowClosing="True">
     <Grid>
         <StackPanel VerticalAlignment="Center">
             <Label Margin="10,10,10,0">Вопрос:</Label>
@@ -53,7 +56,7 @@
                 </Button>
             </Grid>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Margin="20" Padding="10" Command="{Binding AddButtonCommand}">
+                <Button Margin="20" Padding="10" Command="{Binding UpdateAQButtonCommand}">
                     <Button.Content>
                         <TextBlock Style="{StaticResource baseTextBlock}" Text="Изменить"/>
                     </Button.Content>

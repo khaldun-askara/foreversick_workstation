@@ -56,7 +56,7 @@ namespace foreversick_workstationWPF.Model
 
         public bool Equals(Question other)
         {
-            return (other!=null) && id == other.id;
+            return (other != null) && id == other.id;
         }
 
         /// <summary>
@@ -221,20 +221,23 @@ namespace foreversick_workstationWPF.Model
             return AswersAndQuestions;
         }
 
-        //public static async void DeleteAnswerOnQuestionForDiagnosis(string path, int diagnosis_id, int question_id, int new_question_id, int new_answer_id)
+        public static async void UpdateAnswerOnQuestionForDiagnosis(string path, int diagnosis_id, int question_id, int new_question_id, int new_answer_id)
+        {
+            WebRequest request = WebRequest.Create(App.HOST_URL + path
+                                                    + diagnosis_id + '-'
+                                                    + question_id + '-'
+                                                    + new_question_id + '-'
+                                                    + new_answer_id);
+            request.Method = "PUT";
+            await request.GetResponseAsync();
+        }
         public static async void DeleteAnswerOnQuestionForDiagnosis(string path, int diagnosis_id, int question_id)
         {
-            WebRequest request = WebRequest.Create(App.HOST_URL + path 
-                                                    + diagnosis_id + '-' 
+            WebRequest request = WebRequest.Create(App.HOST_URL + path
+                                                    + diagnosis_id + '-'
                                                     + question_id);
             request.Method = "DELETE";
-            WebResponse response = await request.GetResponseAsync();
-            //using Stream dataStreamResponse = response.GetResponseStream();
-            //StreamReader reader = new(dataStreamResponse);
-            //if (!int.TryParse(reader.ReadToEnd(), out result))
-            //    result = -1;
-            //reader.Close();
-            //dataStreamResponse.Close();
+            await request.GetResponseAsync();
         }
         public static async Task<int> PostAnswerOnQuestionForDiagnosis(string path, int diagnosis_id, int answer_id, int question_id)
         {
@@ -277,7 +280,7 @@ namespace foreversick_workstationWPF.Model
         public static async Task<bool> DiagnosisQuestionValidation(string path, int diagnosis_id, int question_id)
         {
             int res = 1;
-            WebRequest request = WebRequest.Create(App.HOST_URL + path + diagnosis_id+"-"+question_id);
+            WebRequest request = WebRequest.Create(App.HOST_URL + path + diagnosis_id + "-" + question_id);
             WebResponse response = await request.GetResponseAsync();
             using (Stream stream = response.GetResponseStream())
             using (StreamReader reader = new(stream))

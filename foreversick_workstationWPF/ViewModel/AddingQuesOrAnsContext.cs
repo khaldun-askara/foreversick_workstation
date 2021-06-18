@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace foreversick_workstationWPF.ViewModel
 {
-    enum AddedType
+    public enum AddedType
     {
         Question,
         Answer
@@ -113,9 +113,9 @@ namespace foreversick_workstationWPF.ViewModel
                 {
                     is_name_valid = await NameValidation();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    MessageBox.Show("Не удалось проверить "+ quesOrAnsWord + " на корректность. Попробуйте ещё раз. Ошибка: " + e.Message);
+                    MessageBox.Show("Не удалось проверить " + quesOrAnsWord + " на корректность. Попробуйте ещё раз. Ошибка: " + e.Message);
                 }
                 if (is_name_valid)
                 {
@@ -124,7 +124,7 @@ namespace foreversick_workstationWPF.ViewModel
                     {
                         result = await addingQuesOrAnsFunctionAsync(Name, adding_path);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         MessageBox.Show("Не удалось отправить " + quesOrAnsWord + ". Попробуйте ещё раз. Ошибка: " + e.Message);
                     }
@@ -134,7 +134,7 @@ namespace foreversick_workstationWPF.ViewModel
             }
             else
             {
-                MessageBox.Show("Временное предупреждение, которое надо переделать: " + ((string.IsNullOrWhiteSpace(Name)) ? "у вас пустая строка, вы дурачок" : "такой вопрос уже есть!!!"));
+                MessageBox.Show("Временное предупреждение, которое надо переделать: " + ((string.IsNullOrWhiteSpace(Name)) ? "у вас пустая строка, вы дурачок" : "такой " + quesOrAnsWord + " уже есть!!!"));
             }
         }
 
