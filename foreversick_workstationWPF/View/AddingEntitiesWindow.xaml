@@ -43,6 +43,11 @@
                         <Setter Property="Width" Value="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type ScrollContentPresenter}}}"/>
                     </Style>
                 </ListBox.ItemContainerStyle>-->
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="Focusable" Value="False"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -52,30 +57,34 @@
                             </Grid.ColumnDefinitions>
                             <Button Height="20" 
                                     Width="20" 
+                                    Margin="5"
+                                    Background="Transparent"
                                     VerticalAlignment="Top" 
                                     HorizontalContentAlignment="Center" 
-                                    VerticalContentAlignment="Center">x</Button>
-                            <TextBlock Grid.Column="1" 
-                                       Margin="10,10,10,10"
-                                       TextWrapping="Wrap"
-                                       HorizontalAlignment="Stretch">
-                                <Run Style="{StaticResource boldRun}">Симптомы:</Run>
-                                <LineBreak/>
-                                <Run Style="{StaticResource baseRun}" Text="{Binding symptoms}"/>
-                                <LineBreak/>
-                                <Run Style="{StaticResource boldRun}">Визуальные проявления:</Run>
-                                <LineBreak/>
-                                <Run Style="{StaticResource baseRun}" Text="{Binding visible_signs}"/>
-                                <LineBreak/>
-                                <Run Style="{StaticResource boldRun}">Вопросы и ответы:</Run>
-                                <LineBreak/>
-                                <Run Style="{StaticResource baseRun}" Text="{Binding questions_and_answers}"/>
-                            </TextBlock>
+                                    VerticalContentAlignment="Center"
+                                    Command="{Binding Path=DataContext.DeleteSuggCommand, 
+                                                      RelativeSource= {RelativeSource FindAncestor, 
+                                                      AncestorType={x:Type ItemsControl}}}"
+                                                      CommandParameter="{Binding}">Х</Button>
+                            <StackPanel Grid.Column="1" Margin="5">
+                                <TextBlock Style="{StaticResource boldForSuggestionHeaders}">Симптомы:</TextBlock>
+                                <TextBox Style="{StaticResource copyableReadOnlySimple}"
+                                         Text="{Binding symptoms, Mode=OneWay}">
+                                </TextBox>
+                                <TextBlock Style="{StaticResource boldForSuggestionHeaders}">Визуальные проявления:</TextBlock>
+                                <TextBox Style="{StaticResource copyableReadOnlySimple}"
+                                         Text="{Binding visible_signs, Mode=OneWay}">
+                                </TextBox>
+                                <TextBlock Style="{StaticResource boldForSuggestionHeaders}">Вопросы и ответы:</TextBlock>
+                                <TextBox Style="{StaticResource copyableReadOnlySimple}"
+                                         Text="{Binding questions_and_answers, Mode=OneWay}">
+                                </TextBox>
+                            </StackPanel>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <TabControl Grid.Column="1" Margin="15,15,30,30" Background="#e7e7e7" BorderBrush="#434343">
+            <TabControl Grid.Column="1" Margin="15,15,30,30" Background="Transparent" BorderBrush="#434343">
                 <TabItem Header="Вопросы и ответы" BorderBrush="#434343">
                     <Grid>
                         <Grid.RowDefinitions>

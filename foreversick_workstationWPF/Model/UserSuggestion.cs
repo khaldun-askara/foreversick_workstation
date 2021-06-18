@@ -36,7 +36,13 @@ namespace foreversick_workstationWPF.Model
             response.Close();
             return Suggestions;
         }
-
+        public static async void DeleteSuggestion(string path, int id)
+        {
+            WebRequest request = WebRequest.Create(App.HOST_URL + path
+                                                    + id);
+            request.Method = "DELETE";
+            await request.GetResponseAsync();
+        }
         public static async Task<List<Inline>> GetSuggestionsForDiagnosis(int diagnosis_id)
         {
             List<UserSuggestion> suggestions = await Task.Run(() => UserSuggestionList.GetSuggestionsForDiagnosis("GameContext/Suggestions/", diagnosis_id));

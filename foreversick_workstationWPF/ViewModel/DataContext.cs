@@ -220,11 +220,6 @@ namespace foreversick_workstationWPF.ViewModel
                         }
                         questionOnAnswers.Remove(current_pair);
                     }
-
-                    //if (current_pair != null)
-                    //    MessageBox.Show("Удаление!!!\nВопрос: " + current_pair.question_text + "\nОтвет: " + current_pair.answer_text);
-                    //else
-                    //    MessageBox.Show("deleteAQCommand говорит, что что-то не так");
                 });
                 return deleteAQCommand;
             }
@@ -265,6 +260,33 @@ namespace foreversick_workstationWPF.ViewModel
             }
         }
 
+        ICommand deleteSuggCommand;
+        public ICommand DeleteSuggCommand
+        {
+            get
+            {
+                deleteSuggCommand = new RelayCommand(obj =>
+                {
+                    UserSuggestion current_suggestion = obj as UserSuggestion;
+                    if (current_suggestion == null)
+                        return;
+                    MessageBoxResult dialog_result = MessageBox.Show("Вы уверены, что хотите удалить данное предложение?", "Удаление предложения пользователя", MessageBoxButton.YesNo);
+                    if (dialog_result == MessageBoxResult.Yes)
+                    {
+                        try
+                        {
+                            UserSuggestionList.DeleteSuggestion("GameContext/Suggestion/", current_suggestion.id);
+                        }
+                        catch (Exception e)
+                        {
+                            MessageBox.Show("Не удалось удалить. Ошибка: " + e.Message);
+                        }
+                        userSuggestions.Remove(current_suggestion);
+                    }
+                });
+                return deleteSuggCommand;
+            }
+        }
         #endregion
 
         ObservableCollection<QuestionOnAnswer> questionOnAnswers = new();
