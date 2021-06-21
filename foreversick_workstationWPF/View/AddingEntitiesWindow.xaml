@@ -38,11 +38,6 @@
                       Margin="30,15,15,30"
                       ItemsSource="{Binding UserSuggestions}"
                       x:Name="userSuggestionsLV">
-                <!--<ListBox.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListBoxItem}">
-                        <Setter Property="Width" Value="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type ScrollContentPresenter}}}"/>
-                    </Style>
-                </ListBox.ItemContainerStyle>-->
                 <ListView.ItemContainerStyle>
                     <Style TargetType="{x:Type ListViewItem}">
                         <Setter Property="Focusable" Value="False"/>
@@ -197,9 +192,9 @@
                                       IsTextSearchEnabled="False"
                                       IsEditable="True" 
                                       BorderThickness="1,1,1,1"
-                                          ItemsSource="{Binding AAAAAAAAA}"
-                                          SelectedItem="{Binding AAAAAAAAA}"
-                                          Text="{Binding AAAAAAAAA}"></ComboBox>
+                                          ItemsSource="{Binding NumericalIndicatorContext.SearchListBySubstring}"
+                                          SelectedItem="{Binding NumericalIndicatorContext.SelectedItem}"
+                                          Text="{Binding NumericalIndicatorContext.Combobox_text}"></ComboBox>
                                 <Button Grid.Column="1" Margin="10" Command="{Binding AAAAAAAAA}">
                                     <TextBlock Style="{StaticResource headerTextBlock}">
                                     +
@@ -212,21 +207,21 @@
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0">
-                                    <Label Margin="10,0,0,0" FontSize="16">Минимальное значение при диагнозе:</Label>
-                                    <TextBox Margin="10"></TextBox>
+                                    <Label Margin="10,0,0,0" ToolTip="{Binding NumericalIndicatorTooltip}" FontSize="16">Минимальное значение при диагнозе:</Label>
+                                    <TextBox Margin="10" Text="{Binding MinValue}"></TextBox>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1">
-                                    <Label Margin="10,0,0,0" FontSize="16">Максимальное значение при диагнозе:</Label>
-                                    <TextBox Margin="10" ></TextBox>
+                                    <Label Margin="10,0,0,0" ToolTip="{Binding NumericalIndicatorTooltip}" FontSize="16">Максимальное значение при диагнозе:</Label>
+                                    <TextBox Margin="10" Text="{Binding MaxValue}"></TextBox>
                                 </StackPanel>
                             </Grid>
-                            <Button Margin="10,10,10,10" Command="{Binding AAAAAAAA}">
+                            <Button Margin="10,10,10,10" Command="{Binding AddNumericalIndicatorToDiagnosis}">
                                 <TextBlock Style="{StaticResource headerTextBlock}">
                                     ↓ Добавить к числовым индикаторам диагноза ↓
                                 </TextBlock>
                             </Button>
                         </StackPanel>
-                        <ListView Grid.Row="1" Margin="10,20,10,20" ItemsSource="{Binding AAAAAA}">
+                        <ListView Grid.Row="1" Margin="10,20,10,20" ItemsSource="{Binding NumericalIndicators}">
                             <ListView.View>
                                 <GridView>
                                     <GridView.ColumnHeaderContainerStyle>
@@ -236,9 +231,9 @@
                                             <Setter Property="TextElement.FontSize" Value="14" />
                                         </Style>
                                     </GridView.ColumnHeaderContainerStyle>
-                                    <GridViewColumn Header="Индикатор" DisplayMemberBinding="{Binding AAAAAAAAAAA}"/>
-                                    <GridViewColumn Header="Мин" DisplayMemberBinding="{Binding AAAAAAAA}"/>
-                                    <GridViewColumn Header="Макс" DisplayMemberBinding="{Binding AAAAAAAA}"/>
+                                    <GridViewColumn Header="Индикатор" DisplayMemberBinding="{Binding indicator}"/>
+                                    <GridViewColumn Header="Мин" DisplayMemberBinding="{Binding value_min}"/>
+                                    <GridViewColumn Header="Макс" DisplayMemberBinding="{Binding value_max}"/>
                                     <GridViewColumn Width="120" Header="Редактировать">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>

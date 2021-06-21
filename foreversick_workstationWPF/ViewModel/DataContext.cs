@@ -21,26 +21,37 @@ namespace foreversick_workstationWPF.ViewModel
                                                                 "GameContext/DiagnosesBySubstring/",
                                                                 "Не удалось загрузить список диагнозов. Проверьте подключение к интернету и повторите попытку.");
 
+        public ComboBoxDataContext<NumericalIndicator> NumericalIndicatorContext { get; set; } = new(NumericalIndicatorList.GetNumericalIndicatorListAsync,
+                                                                "GameContext/NumericalIndicatorsBySubstring/",
+                                                                "Не удалось загрузить список числовых индикаторов. Проверьте подключение к интернету и повторите попытку.");
+
         #endregion
 
         // дурашка, это конструктор
         public DataContext()
         {
             // эта строчка нужна, чтобы подписаться на изменение диагноза и обрабатывать это в SelectedDiagnosisChanged
-            DiagnosisDataContext.SelectedItemChanged += (sender, e) => SelectedDiagnosisChanged(sender, e);
+            DiagnosisDataContext.SelectedItemChanged += SelectedDiagnosisChanged;
+            NumericalIndicatorContext.SelectedItemChanged += SelectedNumericalIndicatorChanged;
         }
         /// <summary>
         /// Вызывается при изменении диагноза. Тут происходит инициализация табличек сущностей и предложений пользователей
         /// </summary>
         void SelectedDiagnosisChanged(object sender, EventArgs e)
         {
-            //MessageBox.Show("SelectedDiagnosisChanged говорит, что DiagnosisDataContext.SelectedItem сменилось на "
-            //    + ((DiagnosisDataContext.SelectedItem != null) ? DiagnosisDataContext.SelectedItem.ToString() : "null"));
             if (DiagnosisDataContext.SelectedItem != null)
             {
-                GetSuggestionsForDiagnosis(DiagnosisDataContext.SelectedItem.id);
-                GetAswersAndQuestionsForDiagnosis(DiagnosisDataContext.SelectedItem.id);
+                int current_diagnosis = DiagnosisDataContext.SelectedItem.id;
+                GetSuggestionsForDiagnosis(current_diagnosis);
+                GetAswersAndQuestionsForDiagnosis(current_diagnosis);
+                GetNumericalIndicatorsForDiagnosis(current_diagnosis);
             }
+        }
+
+        void SelectedNumericalIndicatorChanged(Object sender, EventArgs e)
+        {
+            NumericalIndicator current = NumericalIndicatorContext.SelectedItem;
+            NumericalIndicatorTooltip = (current != null) ? current.Tooltip : "Выберите индикатор";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -49,6 +60,70 @@ namespace foreversick_workstationWPF.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        #region user suggestion listview handling
+        ObservableCollection<UserSuggestion> userSuggestions = new();
+        public ObservableCollection<UserSuggestion> UserSuggestions
+        {
+            get
+            {
+                return userSuggestions;
+            }
+            set
+            {
+                userSuggestions = value;
+                OnPropertyChanged(nameof(UserSuggestions));
+            }
+        }
+
+        async void GetSuggestionsForDiagnosis(int diagnosis_id)
+        {
+            try
+            {
+                UserSuggestions = new(await UserSuggestionList.GetSuggestionsForDiagnosis("GameContext/Suggestions/", diagnosis_id));
+
+            }
+            catch (Exception exc)
+            {
+                MessageBoxResult result = MessageBox.Show(exc.Message + ". Попробовать снова?", "Не удалось загрузить предложения по диагнозу", MessageBoxButton.YesNo);
+                switch (result)
+                {
+                    case MessageBoxResult.Yes:
+                        GetSuggestionsForDiagnosis(diagnosis_id);
+                        break;
+                }
+            }
+        }
+
+        ICommand deleteSuggCommand;
+        public ICommand DeleteSuggCommand
+        {
+            get
+            {
+                deleteSuggCommand = new RelayCommand(obj =>
+                {
+                    UserSuggestion current_suggestion = obj as UserSuggestion;
+                    if (current_suggestion == null)
+                        return;
+                    MessageBoxResult dialog_result = MessageBox.Show("Вы уверены, что хотите удалить данное предложение?", "Удаление предложения пользователя", MessageBoxButton.YesNo);
+                    if (dialog_result == MessageBoxResult.Yes)
+                    {
+                        try
+                        {
+                            UserSuggestionList.DeleteSuggestion("GameContext/Suggestion/", current_suggestion.id);
+                        }
+                        catch (Exception e)
+                        {
+                            MessageBox.Show("Не удалось удалить. Ошибка: " + e.Message);
+                        }
+                        userSuggestions.Remove(current_suggestion);
+                    }
+                });
+                return deleteSuggCommand;
+            }
+        }
+        #endregion
+
+        #region questions and answers tabitem
         #region add buttons for questions and answers
         /// <summary>
         /// Генерация (если это можно так назвать, хахах) команды для кнопочки
@@ -166,7 +241,7 @@ namespace foreversick_workstationWPF.ViewModel
                    + (current_question == null ? "Вопрос не выбран.\n" : ""));
         }
 
-        #endregion
+        #endregion add buttons for questions and answers
 
         #region answer on question for diagnosis listview buttons handling
         ICommand editAQCommand;
@@ -226,69 +301,7 @@ namespace foreversick_workstationWPF.ViewModel
         }
         #endregion
 
-        #region user suggestion listview handling
-        ObservableCollection<UserSuggestion> userSuggestions = new();
-        public ObservableCollection<UserSuggestion> UserSuggestions
-        {
-            get
-            {
-                return userSuggestions;
-            }
-            set
-            {
-                userSuggestions = value;
-                OnPropertyChanged(nameof(UserSuggestions));
-            }
-        }
-
-        async void GetSuggestionsForDiagnosis(int diagnosis_id)
-        {
-            try
-            {
-                UserSuggestions = new(await UserSuggestionList.GetSuggestionsForDiagnosis("GameContext/Suggestions/", diagnosis_id));
-
-            }
-            catch (Exception exc)
-            {
-                MessageBoxResult result = MessageBox.Show(exc.Message + ". Попробовать снова?", "Не удалось загрузить предложения по диагнозу", MessageBoxButton.YesNo);
-                switch (result)
-                {
-                    case MessageBoxResult.Yes:
-                        GetSuggestionsForDiagnosis(diagnosis_id);
-                        break;
-                }
-            }
-        }
-
-        ICommand deleteSuggCommand;
-        public ICommand DeleteSuggCommand
-        {
-            get
-            {
-                deleteSuggCommand = new RelayCommand(obj =>
-                {
-                    UserSuggestion current_suggestion = obj as UserSuggestion;
-                    if (current_suggestion == null)
-                        return;
-                    MessageBoxResult dialog_result = MessageBox.Show("Вы уверены, что хотите удалить данное предложение?", "Удаление предложения пользователя", MessageBoxButton.YesNo);
-                    if (dialog_result == MessageBoxResult.Yes)
-                    {
-                        try
-                        {
-                            UserSuggestionList.DeleteSuggestion("GameContext/Suggestion/", current_suggestion.id);
-                        }
-                        catch (Exception e)
-                        {
-                            MessageBox.Show("Не удалось удалить. Ошибка: " + e.Message);
-                        }
-                        userSuggestions.Remove(current_suggestion);
-                    }
-                });
-                return deleteSuggCommand;
-            }
-        }
-        #endregion
-
+        #region initialising table with answers on questions for diagnosis
         ObservableCollection<QuestionOnAnswer> questionOnAnswers = new();
         public ObservableCollection<QuestionOnAnswer> QuestionOnAnswers
         {
@@ -302,7 +315,6 @@ namespace foreversick_workstationWPF.ViewModel
                 OnPropertyChanged(nameof(QuestionOnAnswers));
             }
         }
-
         async void GetAswersAndQuestionsForDiagnosis(int diagnosis_id)
         {
             try
@@ -320,5 +332,149 @@ namespace foreversick_workstationWPF.ViewModel
                 }
             }
         }
+        #endregion
+        #endregion questions and answers tabitem
+
+        #region numerical indicators tabitem
+
+        #region add buttons for numerical indicators
+        string minValue;
+        string maxValue;
+        public string MinValue
+        {
+            get
+            {
+                return minValue;
+            } 
+            set
+            {
+                minValue = value;
+                OnPropertyChanged(nameof(MinValue));
+            }
+        }
+        public string MaxValue
+        {
+            get
+            {
+                return maxValue;
+            }
+            set
+            {
+                maxValue = value;
+                OnPropertyChanged(nameof(MaxValue));
+            }
+        }
+        string numericalIndicatorTooltip = "Выберите индикатор";
+        public string NumericalIndicatorTooltip
+        {
+            get
+            { 
+                return numericalIndicatorTooltip;
+            }
+            set
+            {
+                numericalIndicatorTooltip = value;
+                OnPropertyChanged(nameof(NumericalIndicatorTooltip));
+            }
+        }
+        ICommand addNumericalIndicatorToDiagnosis;
+        public ICommand AddNumericalIndicatorToDiagnosis
+        {
+            get
+            {
+                addNumericalIndicatorToDiagnosis = new RelayCommand(obj =>
+                {
+                    AddingNumericalIndicatorToDiagnosis();
+                });
+                return addNumericalIndicatorToDiagnosis;
+            }
+        }
+
+        async void AddingNumericalIndicatorToDiagnosis()
+        {
+            Diagnosis current_diagnosis = DiagnosisDataContext.SelectedItem;
+            NumericalIndicator current_indicator = NumericalIndicatorContext.SelectedItem;
+            double min_value = 0, max_value = 0;
+
+            // проверка минимального значения и максимального, всё ли с ними в порядке
+            string whats_wrong = "";
+            bool is_num_values_ok1 = double.TryParse(MinValue, out min_value);
+            bool is_num_values_ok2 = double.TryParse(MaxValue, out max_value);
+            if (is_num_values_ok1)
+            {
+                if (min_value > max_value)
+                    whats_wrong += "Минимальное значение не может быть больше максимального!\n";
+                if (current_indicator!=null && (min_value < current_indicator.min_value || min_value > current_indicator.max_value))
+                    whats_wrong += "Минимальное значение выходит за пределы допустимых значений.\n";
+            }
+            
+            if (is_num_values_ok2 && current_indicator != null && (max_value < current_indicator.min_value || max_value > current_indicator.max_value))
+                whats_wrong += "Максимальное значение выходит за пределы допустимых значений.\n";
+            if (current_diagnosis != null && current_indicator != null && is_num_values_ok1 && is_num_values_ok2 && whats_wrong == "")
+            {
+                bool isExists = true;
+                try
+                {
+                    isExists = await NumericalIndicatorList.DiagnosisNumericalIndicatorValidation("GameContext/DiagnosisNumericalIndicatorValidation/",
+                                                                                      current_diagnosis.id,
+                                                                                      current_indicator.indicator_id);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Не удалось проверить уникальность пары диагноз-индиктор. Попробуйте ещё раз. Ошибка: " + e.Message);
+                }
+                if (isExists)
+                {
+                    MessageBox.Show("Не удалось добавить числовой индикатор к диагнозу. Этот индикатор уже указан для диагноза.");
+                    return;
+                }
+                try
+                {
+                    int result = await NumericalIndicatorInDiagnosisList.PostNumericalIndicatorForDiagnosis("GameContext/NumericalIndicators/",
+                                                                           current_diagnosis.id,
+                                                                           current_indicator.indicator_id,
+                                                                           min_value, max_value);
+                    if (result > 0)
+                        numericalIndicators.Add(new(current_diagnosis.id, current_indicator, min_value, max_value));
+                    else
+                        MessageBox.Show("Не удалось добавить числовой индикатор к диагнозу. Попробуйте ещё раз.");
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Не удалось добавить числовой индикатор к диагнозу. Попробуйте ещё раз. Ошибка: " + e.Message);
+                }
+            }
+            else MessageBox.Show
+                    ((current_diagnosis == null ? "Диагноз не выбран.\n" : "")
+                   + (current_indicator == null ? "Индикатор не выбран.\n" : "")
+                   + whats_wrong
+                   + (!is_num_values_ok1 || !is_num_values_ok2 ? "Минимальное и максимальное значения должны быть рациональными числами. В качестве разделителя используйте запятую.\n" : ""));
+        }
+
+        #endregion
+
+        #region initialising table with numerical indicators for diagnosis
+        ObservableCollection<NumericalIndicatorInDiagnosis> numericalIndicators = new();
+        public ObservableCollection<NumericalIndicatorInDiagnosis> NumericalIndicators { get => numericalIndicators; set { numericalIndicators = value; OnPropertyChanged(nameof(NumericalIndicators)); } }
+        async void GetNumericalIndicatorsForDiagnosis(int diagnosis_id)
+        {
+            try
+            {
+                NumericalIndicators = new(await NumericalIndicatorInDiagnosisList.GetNumericalIndicatorsForDiagnosis("GameContext/NumericalIndicators/", diagnosis_id));
+            }
+            catch (Exception exc)
+            {
+                MessageBoxResult result = MessageBox.Show(exc.Message + ". Попробовать снова?", "Не удалось загрузить числовые индикаторы", MessageBoxButton.YesNo);
+                switch (result)
+                {
+                    case MessageBoxResult.Yes:
+                        GetNumericalIndicatorsForDiagnosis(diagnosis_id);
+                        break;
+                }
+            }
+        }
+        #endregion initialising table with numerical indicators for diagnosis
+
+        #endregion numerical indicators tabitem
     }
 }
