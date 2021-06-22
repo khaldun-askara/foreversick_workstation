@@ -11,7 +11,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="View\arm help icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Include="App.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="View\arm help icon.png" />
   </ItemGroup>
 
 </Project>

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -39,7 +38,7 @@ namespace foreversick_workstationWPF.ViewModel
         }
 
         public event EventHandler SelectedItemChanged;
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
@@ -109,7 +108,7 @@ namespace foreversick_workstationWPF.ViewModel
                 SelectedItemChanged?.Invoke(this, new EventArgs());
             }
         }
-        async void _tmrDelaySearch_TickAsync(object sender, EventArgs e) 
+        async void _tmrDelaySearch_TickAsync(object sender, EventArgs e)
         {
             Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
             if (_tmrDelaySearch != null)

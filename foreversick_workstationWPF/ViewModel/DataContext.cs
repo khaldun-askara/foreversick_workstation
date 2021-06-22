@@ -345,7 +345,7 @@ namespace foreversick_workstationWPF.ViewModel
             get
             {
                 return minValue;
-            } 
+            }
             set
             {
                 minValue = value;
@@ -368,7 +368,7 @@ namespace foreversick_workstationWPF.ViewModel
         public string NumericalIndicatorTooltip
         {
             get
-            { 
+            {
                 return numericalIndicatorTooltip;
             }
             set
@@ -377,6 +377,35 @@ namespace foreversick_workstationWPF.ViewModel
                 OnPropertyChanged(nameof(NumericalIndicatorTooltip));
             }
         }
+
+        ICommand addNumericalIndicalorCommand;
+        public ICommand AddNumericalIndicalorCommand
+        {
+            get
+            {
+                addNumericalIndicalorCommand = new RelayCommand(obj =>
+                {
+                    CreateaddNumericalIndicalorCommandCommand(TypeOfAction.Insert, NumericalIndicatorContext.Combobox_text);
+                });
+                return addNumericalIndicalorCommand;
+            }
+        }
+
+        private bool CreateaddNumericalIndicalorCommandCommand(TypeOfAction type, string combobox_text)
+        {
+            AddingNumericalIndicatorContext context = new AddingNumericalIndicatorContext(combobox_text,
+                                                                                          NumericalIndicatorList.PostNumericalIndicatorListAsync,
+                                                                                          "GameContext/NumericalIndicator/",
+                                                                                          NumericalIndicatorList.GetNumericalIndicatorListAsync,
+                                                                                          "GameContext/NumericalIndicatorsBySubstring/");
+            AddingNumericalIndicator addingNumericalIndicatorWindow = new()
+            {
+                DataContext = context
+            };
+            bool? resultDialog = addingNumericalIndicatorWindow.ShowDialog();
+            return (resultDialog.HasValue) ? resultDialog.Value : false;
+        }
+
         ICommand addNumericalIndicatorToDiagnosis;
         public ICommand AddNumericalIndicatorToDiagnosis
         {
@@ -404,10 +433,10 @@ namespace foreversick_workstationWPF.ViewModel
             {
                 if (min_value > max_value)
                     whats_wrong += "Минимальное значение не может быть больше максимального!\n";
-                if (current_indicator!=null && (min_value < current_indicator.min_value || min_value > current_indicator.max_value))
+                if (current_indicator != null && (min_value < current_indicator.min_value || min_value > current_indicator.max_value))
                     whats_wrong += "Минимальное значение выходит за пределы допустимых значений.\n";
             }
-            
+
             if (is_num_values_ok2 && current_indicator != null && (max_value < current_indicator.min_value || max_value > current_indicator.max_value))
                 whats_wrong += "Максимальное значение выходит за пределы допустимых значений.\n";
             if (current_diagnosis != null && current_indicator != null && is_num_values_ok1 && is_num_values_ok2 && whats_wrong == "")

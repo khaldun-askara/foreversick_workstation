@@ -10,6 +10,13 @@
             <Setter Property="Foreground" Value="#434343" />
             <Setter Property="FontFamily" Value="Roboto Light, Roboto"/>
             <Setter Property="FontSize" Value="16" />
+            <Setter Property="Padding" Value="2"/>
+        </Style>
+        <Style x:Key="baseTextBox" TargetType="TextBox">
+            <Setter Property="Foreground" Value="#434343" />
+            <Setter Property="FontFamily" Value="Roboto Light, Roboto"/>
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Padding" Value="2"/>
         </Style>
         <Style x:Key="copyableReadOnlySimple" TargetType="TextBox">
             <Setter Property="Background" Value="Transparent"/>
@@ -20,7 +27,27 @@
             <Setter Property="FontFamily" Value="Roboto Light, Roboto"/>
             <Setter Property="FontSize" Value="14" />
         </Style>
-        
+        <Style x:Key="numericalTextBox" TargetType="{x:Type TextBox}" BasedOn="{StaticResource baseTextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip"
+                Value="{Binding RelativeSource={RelativeSource Self}, 
+                       Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="Validation.ErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <DockPanel LastChildFill="True">
+                            <Border BorderBrush="Red" BorderThickness="1">
+                                <AdornedElementPlaceholder Name="MyAdorner" />
+                            </Border>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- TextBlock styles -->
         <Style x:Key="baseTextBlock" TargetType="TextBlock">
             <Setter Property="Foreground" Value="#434343" />

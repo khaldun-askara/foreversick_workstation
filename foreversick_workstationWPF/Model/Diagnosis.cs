@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
@@ -79,7 +77,7 @@ namespace foreversick_workstationWPF.Model
             this.diagnosis_text = diagnosis_text;
             this.mcb_code = mcb_code;
         }
-        public override string ToString() 
+        public override string ToString()
         {
             return diagnosis_text;
         }

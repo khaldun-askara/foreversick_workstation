@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -68,6 +67,35 @@ namespace foreversick_workstationWPF.Model
             NumericalIndicators = JsonSerializer.Deserialize<NumericalIndicatorList>(numindJSON).numericalIndicators;
             response.Close();
             return NumericalIndicators;
+        }
+
+        public static async Task<int> PostNumericalIndicatorListAsync(string path, string name, double min_value, double max_value,
+            double normal_min, double normal_max, string units_name, int accuracy)
+        {
+            int result = -1;
+            NumericalIndicator new_inducator = new(0, name, min_value, max_value, normal_min, normal_max, units_name, accuracy);
+            WebRequest request = WebRequest.Create(App.HOST_URL + path);
+            request.Method = "POST";
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+                WriteIndented = true
+            };
+            string result_stringJSON = JsonSerializer.Serialize<NumericalIndicator>(new_inducator, options);
+            byte[] byteArray = Encoding.UTF8.GetBytes(result_stringJSON);
+            request.ContentLength = byteArray.Length;
+            request.ContentType = "application/json; charset = UTF-8";
+            Stream dataStream = request.GetRequestStream();
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            dataStream.Close();
+            WebResponse response = await request.GetResponseAsync();
+            using Stream dataStreamResponse = response.GetResponseStream();
+            StreamReader reader = new(dataStreamResponse);
+            if (!int.TryParse(reader.ReadToEnd(), out result))
+                result = -1;
+            reader.Close();
+            dataStreamResponse.Close();
+            return result;
         }
 
         /// <summary>

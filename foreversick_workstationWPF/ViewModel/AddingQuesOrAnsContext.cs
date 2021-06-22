@@ -18,6 +18,7 @@ namespace foreversick_workstationWPF.ViewModel
         /// <summary>
         /// Возвращает vm для формы добавления варианта вопроса или ответа
         /// </summary>
+        /// <param name="action">Изменение или добавление?</param>
         /// <param name="current_type">Тип: форма для вопроса или ответа</param>
         /// <param name="textOfQuesOrAns">Текст вопроса или ответа</param>
         /// <param name="addingQuesOrAnsFunctionAsync">Функция для добавления вопроса или ответа на сервер</param>
@@ -29,8 +30,10 @@ namespace foreversick_workstationWPF.ViewModel
             Func<string, string, Task<int>> addingQuesOrAnsFunctionAsync,
             string adding_path,
             Func<string, Task<List<T>>> textValidationFuncAsync,
-            string validation_path)
+            string validation_path, TypeOfAction action = TypeOfAction.Insert)
         {
+            this.action = action;
+            SetTitleAndButtonText(action);
             this.current_type = current_type;
             this.Name = textOfQuesOrAns;
 
@@ -44,20 +47,38 @@ namespace foreversick_workstationWPF.ViewModel
                     break;
             }
             Label_text = quesOrAnsWord + "а";
-            Title_text += Label_text;
             this.addingQuesOrAnsFunctionAsync = addingQuesOrAnsFunctionAsync;
             this.adding_path = adding_path;
             this.textValidationFuncAsync = textValidationFuncAsync;
             this.validation_path = validation_path;
         }
 
+        private void SetTitleAndButtonText(TypeOfAction action)
+        {
+            switch (action)
+            {
+                case TypeOfAction.Insert:
+                    Title_text = "Добавление ";
+                    Button_text = "Добавить";
+                    break;
+                case TypeOfAction.Update:
+                    Title_text = "Изменение ";
+                    Button_text = "Изменить";
+                    break;
+            }
+            Title_text += Label_text;
+        }
+
+        TypeOfAction action;
         AddedType current_type;
         private bool? dialogResult;
         private string label_text;
-        private string title_text = "Добавление ";
+        private string title_text = "";
+        private string button_text = "";
         public bool? DialogResult { get => dialogResult; set { dialogResult = value; OnPropertyChanged(nameof(DialogResult)); } }
         public string Label_text { get => label_text; set { label_text = value; OnPropertyChanged(nameof(Label_text)); } }
         public string Title_text { get => title_text; set { title_text = value; OnPropertyChanged(nameof(Title_text)); } }
+        public string Button_text { get => button_text; set { button_text = value; OnPropertyChanged(nameof(Button_text)); } }
 
         public event PropertyChangedEventHandler PropertyChanged;
         void OnPropertyChanged(string propertyName)
