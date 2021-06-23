@@ -1,0 +1,90 @@
+﻿<Window x:Class="foreversick_workstationWPF.View.NumericalIndicatorUpdateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:foreversick_workstationWPF.View"
+        xmlns:xc="clr-namespace:foreversick_workstationWPF.ViewModel"
+        xc:DialogCloser.DialogResult="{Binding DialogResult}"
+        mc:Ignorable="d"
+        Title="Изменение числового индикатора для диагноза" Height="400" Width="800"
+        WindowStartupLocation="CenterScreen"
+        xmlns:viewmodel="clr-namespace:foreversick_workstationWPF.ViewModel"
+        viewmodel:WindowCloser.EnableWindowClosing="True">
+    <Grid>
+        <StackPanel VerticalAlignment="Center" Margin="30">
+            <Label Margin="10,10,10,0">Числовой индикатор:</Label>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="9*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox x:Name="numerical_indicatorsComboBox" 
+                                      Margin="10"
+                                      StaysOpenOnEdit="True" 
+                                      IsTextSearchEnabled="False"
+                                      IsEditable="True" 
+                                      BorderThickness="1,1,1,1"
+                                          ItemsSource="{Binding NumericalIndicatorContext.SearchListBySubstring}"
+                                          SelectedItem="{Binding NumericalIndicatorContext.SelectedItem}"
+                                          Text="{Binding NumericalIndicatorContext.Combobox_text}"></ComboBox>
+                <Button Grid.Column="1" Margin="10" Command="{Binding AddNumericalIndicalorCommand}">
+                    <TextBlock Style="{StaticResource headerTextBlock}">
+                        +
+                    </TextBlock>
+                </Button>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <Label Margin="5,0,0,0" FontSize="16">Минимальное значение при диагнозе:</Label>
+                    <TextBox Margin="10">
+                        <TextBox.Text>
+                            <Binding Path = "MinValue" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <viewmodel:DoubleValueValidator ErrorMessage="Введите рациональное число. Используйте в качестве разделителя запятую" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <Label Margin="5,0,0,0" FontSize="16">Максимальное значение при диагнозе:</Label>
+                    <TextBox Margin="10">
+                        <TextBox.Text>
+                            <Binding Path = "MaxValue" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <viewmodel:DoubleValueValidator ErrorMessage="Введите рациональное число. Используйте в качестве разделителя запятую" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                </StackPanel>
+                <Image Margin="10" ToolTip="{Binding NumericalIndicatorTooltip}" Grid.Column="2">
+                    <Image.OpacityMask>
+                        <ImageBrush ImageSource="/View/arm help icon.png"/>
+                    </Image.OpacityMask>
+                    <Image.Source>
+                        <BitmapImage DecodePixelWidth="128"  UriSource="/View/arm help icon.png" />
+                    </Image.Source>
+                </Image>
+            </Grid>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Margin="20" Padding="10" Command="{Binding UpdateButtonCommand}">
+                    <Button.Content>
+                        <TextBlock Style="{StaticResource baseTextBlock}" Text="Изменить"/>
+                    </Button.Content>
+                </Button>
+                <Button Margin="20" Padding="10" Command="{Binding CancelButtonCommand}">
+                    <Button.Content>
+                        <TextBlock Style="{StaticResource baseTextBlock}" Text="Отмена"/>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -85,7 +85,6 @@ namespace foreversick_workstationWPF.ViewModel
 
         private async void Update()
         {
-            MessageBox.Show("ты видишь заглушку из Update");
             Question current_question = QuestionsDataContext.SelectedItem;
             Answer current_answer = AnswersDataContext.SelectedItem;
 

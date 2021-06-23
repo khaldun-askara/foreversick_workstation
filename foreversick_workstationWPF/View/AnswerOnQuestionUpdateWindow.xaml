@@ -12,7 +12,7 @@
         xmlns:viewmodel="clr-namespace:foreversick_workstationWPF.ViewModel"
         viewmodel:WindowCloser.EnableWindowClosing="True">
     <Grid>
-        <StackPanel VerticalAlignment="Center">
+        <StackPanel VerticalAlignment="Center" Margin="30">
             <Label Margin="10,10,10,0">Вопрос:</Label>
             <Grid>
                 <Grid.ColumnDefinitions>

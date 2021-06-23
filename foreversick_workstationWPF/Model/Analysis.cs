@@ -177,6 +177,35 @@ namespace foreversick_workstationWPF.Model
         {
             return indicator.name;
         }
+
+        public static async void UpdateNumericalIndicatorForDiagnosis(string path, int old_indicator_id, num_indicator_in_diagnosis new_indicator)
+        {
+            WebRequest request = WebRequest.Create(App.HOST_URL + path
+                                                    + old_indicator_id);
+            request.Method = "PUT";
+
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+                WriteIndented = true
+            };
+            string result_stringJSON = JsonSerializer.Serialize<num_indicator_in_diagnosis>(new_indicator, options);
+            byte[] byteArray = Encoding.UTF8.GetBytes(result_stringJSON);
+            request.ContentLength = byteArray.Length;
+            request.ContentType = "application/json; charset = UTF-8";
+            Stream dataStream = request.GetRequestStream();
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            dataStream.Close();
+            await request.GetResponseAsync();
+        }
+        public static async void DeleteNumericalInducatorDiagnosis(string path, int diagnosis_id, int indicator_id)
+        {
+            WebRequest request = WebRequest.Create(App.HOST_URL + path
+                                                    + diagnosis_id + '-'
+                                                    + indicator_id);
+            request.Method = "DELETE";
+            await request.GetResponseAsync();
+        }
     }
 
     public class NumericalIndicatorInDiagnosisList

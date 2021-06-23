@@ -270,7 +270,7 @@
                                     <GridViewColumn Width="120" Header="Редактировать">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <Button Command="{Binding Path=DataContext.AAAAAAAAAAAA, 
+                                                <Button Command="{Binding Path=DataContext.EditNICommand, 
                                                                           RelativeSource= {RelativeSource FindAncestor, 
                                                                           AncestorType={x:Type ItemsControl}}}"
                                                         CommandParameter="{Binding}">Редактировать</Button>
@@ -280,7 +280,7 @@
                                     <GridViewColumn Width="100" Header="Удалить">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <Button Command="{Binding Path=DataContext.AAAAAAAAA, 
+                                                <Button Command="{Binding Path=DataContext.DeleteNICommand, 
                                                                           RelativeSource= {RelativeSource FindAncestor, 
                                                                           AncestorType={x:Type ItemsControl}}}"
                                                         CommandParameter="{Binding}">Удалить</Button>

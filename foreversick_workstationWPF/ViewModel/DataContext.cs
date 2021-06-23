@@ -412,8 +412,8 @@ namespace foreversick_workstationWPF.ViewModel
                 return addNumericalIndicalorCommand;
             }
         }
-
-        private bool CreateaddNumericalIndicalorCommand(TypeOfAction type, string combobox_text)
+        
+        public static bool CreateaddNumericalIndicalorCommand(TypeOfAction type, string combobox_text)
         {
             AddingNumericalIndicatorContext context = new AddingNumericalIndicatorContext(combobox_text,
                                                                                           NumericalIndicatorList.PostNumericalIndicatorListAsync,
@@ -526,6 +526,66 @@ namespace foreversick_workstationWPF.ViewModel
             }
         }
         #endregion initialising table with numerical indicators for diagnosis
+
+        #region numerical indicator for diagnosis listview buttons handling
+        ICommand editNICommand;
+        public ICommand EditNICommand
+        {
+            get
+            {
+                editNICommand = new RelayCommand(obj =>
+                {
+                    NumericalIndicatorInDiagnosis current_indicator_id_diagnosis = obj as NumericalIndicatorInDiagnosis;
+                    if (current_indicator_id_diagnosis != null)
+                    {
+                        NumericalIndicatorUpdateContext updateContext = new(DiagnosisDataContext.SelectedItem.id,
+                                                                            current_indicator_id_diagnosis.indicator,
+                                                                            current_indicator_id_diagnosis.value_min,
+                                                                            current_indicator_id_diagnosis.value_max);
+
+                        NumericalIndicatorUpdateWindow updateWindow = new()
+                        {
+                            DataContext = updateContext
+                        };
+                        bool? resultDialog = updateWindow.ShowDialog();
+                        if (resultDialog.HasValue && resultDialog.Value)
+                            GetNumericalIndicatorsForDiagnosis(DiagnosisDataContext.SelectedItem.id);
+                    }
+                });
+                return editNICommand;
+            }
+        }
+
+        ICommand deleteNICommand;
+        public ICommand DeleteNICommand
+        {
+            get
+            {
+                deleteNICommand = new RelayCommand(obj =>
+                {
+                    NumericalIndicatorInDiagnosis current_indicator_id_diagnosis = obj as NumericalIndicatorInDiagnosis;
+                    MessageBoxResult dialog_result = MessageBox.Show("Вы уверены, что хотите удалить следующую запись:\nИндикатор: \""
+                        + current_indicator_id_diagnosis.indicator + "\"\nМинимальное значение: \"" + current_indicator_id_diagnosis.value_min + "\"\nМаксимальное значение: \"" + current_indicator_id_diagnosis.value_max
+                        + "\"\nдля диагноза \"" + DiagnosisDataContext.SelectedItem + "\"", "Удаление записи", MessageBoxButton.YesNo) ;
+                    if (dialog_result == MessageBoxResult.Yes)
+                    {
+                        try
+                        {
+                            NumericalIndicatorInDiagnosis.DeleteNumericalInducatorDiagnosis("GameContext/NumericalIndicatorsDelete/",
+                                                                                    DiagnosisDataContext.SelectedItem.id,
+                                                                                    current_indicator_id_diagnosis.indicator.indicator_id);
+                        }
+                        catch (Exception e)
+                        {
+                            MessageBox.Show("Не удалось удалить. Ошибка: " + e.Message);
+                        }
+                        numericalIndicators.Remove(current_indicator_id_diagnosis);
+                    }
+                });
+                return deleteNICommand;
+            }
+        }
+        #endregion
 
         #endregion numerical indicators tabitem
     }

@@ -8,7 +8,7 @@
         <!-- Tabitem styles-->
         <Style TargetType="TabItem">
             <Setter Property="FontFamily" Value="Roboto Light"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontSize" Value="12"/>
         </Style>
         <!-- TextBox styles-->
         <Style TargetType="TextBox">
