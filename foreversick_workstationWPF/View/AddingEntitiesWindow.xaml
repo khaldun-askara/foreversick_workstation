@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:foreversick_workstationWPF" xmlns:viewmodel="clr-namespace:foreversick_workstationWPF.ViewModel"
         mc:Ignorable="d"
-        Title="Добавление информации о диагнозах" Height="800" Width="1200" WindowStartupLocation="CenterScreen">
+        Title="Добавление информации о диагнозах" Height="800" Width="1200" WindowStartupLocation="CenterScreen"
+        viewmodel:WindowCloser.EnableWindowClosing="True">
     <Window.DataContext>
         <viewmodel:DataContext/>
     </Window.DataContext>
@@ -15,7 +16,14 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="30,30,30,0">
-            <Label>Выберите диагноз:</Label>
+            <Grid Margin ="0,0,0,10" HorizontalAlignment="Stretch">
+                <Label>Выберите диагноз:</Label>
+                <Button Command="{Binding ToMainWindowCommand}" HorizontalAlignment="Right" Margin="0">
+                    <TextBlock Style="{StaticResource headerTextBlock}" FontSize="14" Margin="5">
+                        На главную
+                    </TextBlock>
+                </Button>
+            </Grid>
             <ComboBox StaysOpenOnEdit="True" 
                       IsTextSearchEnabled="False" 
                       x:Name="diagnosisComboBox" 
@@ -209,11 +217,27 @@
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0">
                                     <Label Margin="5,0,0,0" FontSize="16">Минимальное значение при диагнозе:</Label>
-                                    <TextBox Margin="10" Text="{Binding MinValue}"></TextBox>
+                                    <TextBox Margin="10">
+                                        <TextBox.Text>
+                                            <Binding Path = "MinValue" UpdateSourceTrigger="PropertyChanged">
+                                                <Binding.ValidationRules>
+                                                    <viewmodel:DoubleValueValidator ErrorMessage="Введите рациональное число. Используйте в качестве разделителя запятую" />
+                                                </Binding.ValidationRules>
+                                            </Binding>
+                                        </TextBox.Text>
+                                    </TextBox>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1">
                                     <Label Margin="5,0,0,0" FontSize="16">Максимальное значение при диагнозе:</Label>
-                                    <TextBox Margin="10" Text="{Binding MaxValue}"></TextBox>
+                                    <TextBox Margin="10">
+                                        <TextBox.Text>
+                                            <Binding Path = "MaxValue" UpdateSourceTrigger="PropertyChanged">
+                                                <Binding.ValidationRules>
+                                                    <viewmodel:DoubleValueValidator ErrorMessage="Введите рациональное число. Используйте в качестве разделителя запятую" />
+                                                </Binding.ValidationRules>
+                                            </Binding>
+                                        </TextBox.Text>
+                                    </TextBox>
                                 </StackPanel>
                                 <Image Margin="10" ToolTip="{Binding NumericalIndicatorTooltip}" Grid.Column="2">
                                     <Image.OpacityMask>

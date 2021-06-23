@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace foreversick_workstationWPF.ViewModel
 {
-    public class DataContext : INotifyPropertyChanged
+    public class DataContext : INotifyPropertyChanged, ICloseWindow
     {
         #region contexts
         public ComboBoxDataContext<Question> QuestionsDataContext { get; set; } = new(QuestionList.GetQuestionsListAsync,
@@ -58,6 +58,28 @@ namespace foreversick_workstationWPF.ViewModel
         void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public Action Close { get; set; }
+
+        public bool CanClose()
+        {
+            return true;
+        }
+
+        ICommand toMainWindowCommand;
+        public ICommand ToMainWindowCommand
+        {
+            get
+            {
+                toMainWindowCommand = new RelayCommand(obj =>
+                {
+                    MainWindow mainWindow = new();
+                    mainWindow.Show();
+                    Close?.Invoke();
+                });
+                return toMainWindowCommand;
+            }
         }
 
         #region user suggestion listview handling
@@ -385,13 +407,13 @@ namespace foreversick_workstationWPF.ViewModel
             {
                 addNumericalIndicalorCommand = new RelayCommand(obj =>
                 {
-                    CreateaddNumericalIndicalorCommandCommand(TypeOfAction.Insert, NumericalIndicatorContext.Combobox_text);
+                    CreateaddNumericalIndicalorCommand(TypeOfAction.Insert, NumericalIndicatorContext.Combobox_text);
                 });
                 return addNumericalIndicalorCommand;
             }
         }
 
-        private bool CreateaddNumericalIndicalorCommandCommand(TypeOfAction type, string combobox_text)
+        private bool CreateaddNumericalIndicalorCommand(TypeOfAction type, string combobox_text)
         {
             AddingNumericalIndicatorContext context = new AddingNumericalIndicatorContext(combobox_text,
                                                                                           NumericalIndicatorList.PostNumericalIndicatorListAsync,
@@ -447,30 +469,30 @@ namespace foreversick_workstationWPF.ViewModel
                     isExists = await NumericalIndicatorList.DiagnosisNumericalIndicatorValidation("GameContext/DiagnosisNumericalIndicatorValidation/",
                                                                                       current_diagnosis.id,
                                                                                       current_indicator.indicator_id);
+                    if (isExists)
+                    {
+                        MessageBox.Show("Не удалось добавить числовой индикатор к диагнозу. Этот индикатор уже указан для диагноза.");
+                        return;
+                    }
+                    try
+                    {
+                        int result = await NumericalIndicatorInDiagnosisList.PostNumericalIndicatorForDiagnosis("GameContext/NumericalIndicators/",
+                                                                               current_diagnosis.id,
+                                                                               current_indicator.indicator_id,
+                                                                               min_value, max_value);
+                        if (result > 0)
+                            numericalIndicators.Add(new(current_diagnosis.id, current_indicator, min_value, max_value));
+                        else
+                            MessageBox.Show("Не удалось добавить числовой индикатор к диагнозу. Попробуйте ещё раз.");
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show("Не удалось добавить числовой индикатор к диагнозу. Попробуйте ещё раз. Ошибка: " + e.Message);
+                    }
                 }
                 catch (Exception e)
                 {
                     MessageBox.Show("Не удалось проверить уникальность пары диагноз-индиктор. Попробуйте ещё раз. Ошибка: " + e.Message);
-                }
-                if (isExists)
-                {
-                    MessageBox.Show("Не удалось добавить числовой индикатор к диагнозу. Этот индикатор уже указан для диагноза.");
-                    return;
-                }
-                try
-                {
-                    int result = await NumericalIndicatorInDiagnosisList.PostNumericalIndicatorForDiagnosis("GameContext/NumericalIndicators/",
-                                                                           current_diagnosis.id,
-                                                                           current_indicator.indicator_id,
-                                                                           min_value, max_value);
-                    if (result > 0)
-                        numericalIndicators.Add(new(current_diagnosis.id, current_indicator, min_value, max_value));
-                    else
-                        MessageBox.Show("Не удалось добавить числовой индикатор к диагнозу. Попробуйте ещё раз.");
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Не удалось добавить числовой индикатор к диагнозу. Попробуйте ещё раз. Ошибка: " + e.Message);
                 }
             }
             else MessageBox.Show
@@ -485,6 +507,7 @@ namespace foreversick_workstationWPF.ViewModel
         #region initialising table with numerical indicators for diagnosis
         ObservableCollection<NumericalIndicatorInDiagnosis> numericalIndicators = new();
         public ObservableCollection<NumericalIndicatorInDiagnosis> NumericalIndicators { get => numericalIndicators; set { numericalIndicators = value; OnPropertyChanged(nameof(NumericalIndicators)); } }
+
         async void GetNumericalIndicatorsForDiagnosis(int diagnosis_id)
         {
             try

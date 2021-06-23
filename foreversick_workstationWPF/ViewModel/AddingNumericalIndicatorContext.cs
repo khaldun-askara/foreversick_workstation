@@ -53,7 +53,7 @@ namespace foreversick_workstationWPF.ViewModel
             get { return name; }
             set
             {
-                name = value;
+                name = AddingQuesOrAnsContext<Question>.FirstLetterToUp(value);
                 OnPropertyChanged(nameof(Name));
             }
         }
@@ -233,7 +233,7 @@ namespace foreversick_workstationWPF.ViewModel
             }
             else
             {
-                whats_wrong += "Заполните обведённые красным поля корректными значениями.\n";
+                whats_wrong += "Заполните числовые поля корректными значениями.\n";
                 is_all_ok = false;
             }
             // единица измерения не пустая
@@ -251,7 +251,7 @@ namespace foreversick_workstationWPF.ViewModel
             }
 
             if (!is_all_ok)
-            { MessageBox.Show(whats_wrong); DialogResult = false; Close?.Invoke(); return; }
+            { MessageBox.Show(whats_wrong); return; }
 
             // проверить, существует ли такой показатель уже
             try
@@ -260,16 +260,12 @@ namespace foreversick_workstationWPF.ViewModel
                 if (is_exists)
                 {
                     MessageBox.Show("Числовой индикатор с таким названием уже существует");
-                    DialogResult = false;
-                    Close?.Invoke();
                     return;
                 }
             }
             catch (Exception e)
             {
                 MessageBox.Show("Не удалось проверить название индикатора на уникальность. Ошибка: " + e.Message);
-                DialogResult = false;
-                Close?.Invoke();
                 return;
             }
             // попытаться добавить
@@ -284,8 +280,6 @@ namespace foreversick_workstationWPF.ViewModel
             catch (Exception e)
             {
                 MessageBox.Show("Не удалось добавить числовой индикатор. Ошибка: " + e.Message);
-                DialogResult = false;
-                Close?.Invoke();
             }
 
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -91,7 +92,18 @@ namespace foreversick_workstationWPF.ViewModel
         Func<string, Task<List<T>>> textValidationFuncAsync;
         string validation_path;
         string quesOrAnsWord;
-        public string Name { get; set; }
+        string name;
+        public string Name {
+            get 
+            { 
+                return name; 
+            } 
+            set 
+            {
+                name = FirstLetterToUp(value);
+                OnPropertyChanged(nameof(Name));
+            }
+        }
 
         ICommand addButtonCommand;
         public ICommand AddButtonCommand
@@ -171,6 +183,13 @@ namespace foreversick_workstationWPF.ViewModel
         public bool CanClose()
         {
             return true;
+        }
+
+        public static string FirstLetterToUp(string substring)
+        {
+            if (string.IsNullOrWhiteSpace(substring))
+                return string.Empty;
+            return Regex.Replace(substring.ToLower(), @"^[a-zа-яё]", m => m.Value.ToUpper()); 
         }
     }
 }

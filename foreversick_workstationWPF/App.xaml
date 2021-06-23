@@ -5,6 +5,11 @@
              StartupUri="View/MainWindow.xaml">
     <Application.Resources>
         
+        <!-- Tabitem styles-->
+        <Style TargetType="TabItem">
+            <Setter Property="FontFamily" Value="Roboto Light"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
         <!-- TextBox styles-->
         <Style TargetType="TextBox">
             <Setter Property="Foreground" Value="#434343" />

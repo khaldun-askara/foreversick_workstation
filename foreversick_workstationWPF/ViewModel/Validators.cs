@@ -14,6 +14,8 @@ namespace foreversick_workstationWPF.ViewModel
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             ValidationResult result = new ValidationResult(true, null);
+            if (string.IsNullOrWhiteSpace(value.ToString()))
+                return result;
             double res;
             if (!double.TryParse((value ?? string.Empty).ToString(), out res))
                 result = new ValidationResult(false, this.ErrorMessage);

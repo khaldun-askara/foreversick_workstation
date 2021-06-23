@@ -8,7 +8,7 @@
         xmlns:xc="clr-namespace:foreversick_workstationWPF.ViewModel"
         xc:DialogCloser.DialogResult="{Binding DialogResult}"
         mc:Ignorable="d"
-        Title="" Height="600" Width="800"
+        Title="{Binding Title_text}" Height="600" Width="800"
         WindowStartupLocation="CenterScreen"
         viewmodel:WindowCloser.EnableWindowClosing="True">
     <Window.DataContext>
@@ -33,7 +33,7 @@
                     <Label Margin="20,0,10,5">Минимальное возможное значение:</Label>
                     <TextBox Style="{StaticResource numericalTextBox}" Margin="20,0,10,10">
                         <TextBox.Text>
-                            <Binding Path = "Min_Value">
+                            <Binding Path = "Min_Value" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
                                     <viewmodel:DoubleValueValidator ErrorMessage="Введите рациональное число. Используйте в качестве разделителя запятую" />
                                 </Binding.ValidationRules>
@@ -45,7 +45,7 @@
                     <Label Margin="10,0,0,5">Максимальное возможное значение:</Label>
                     <TextBox Style="{StaticResource numericalTextBox}" Margin="10,0,20,10" >
                         <TextBox.Text>
-                            <Binding Path = "Max_Value">
+                            <Binding Path = "Max_Value" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
                                     <viewmodel:DoubleValueValidator ErrorMessage="Введите рациональное число. Используйте в качестве разделителя запятую" />
                                 </Binding.ValidationRules>
@@ -57,7 +57,7 @@
                     <Label Margin="20,0,10,5">Минимальное значение нормы:</Label>
                     <TextBox Style="{StaticResource numericalTextBox}" Margin="20,0,10,10" >
                         <TextBox.Text>
-                            <Binding Path = "Normal_min">
+                            <Binding Path = "Normal_min" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
                                     <viewmodel:DoubleValueValidator ErrorMessage="Введите рациональное число. Используйте в качестве разделителя запятую" />
                                 </Binding.ValidationRules>
@@ -68,7 +68,7 @@
                     <Label Margin="10,0,0,5">Максимальное значение нормы:</Label>
                     <TextBox Style="{StaticResource numericalTextBox}" Margin="10,0,20,10" >
                         <TextBox.Text>
-                            <Binding Path = "Normal_max">
+                            <Binding Path = "Normal_max" UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
                                     <viewmodel:DoubleValueValidator ErrorMessage="Введите рациональное число. Используйте в качестве разделителя запятую" />
                                 </Binding.ValidationRules>
