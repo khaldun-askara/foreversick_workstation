@@ -311,16 +311,16 @@
                                       IsTextSearchEnabled="False"
                                       IsEditable="True" 
                                       BorderThickness="1,1,1,1"
-                                          ItemsSource="{Binding ААААААААААААААААААААААА}"
-                                          SelectedItem="{Binding ААААААААААА}"
-                                          Text="{Binding АААААААААААААААА}"></ComboBox>
-                                <Button Grid.Column="1" Margin="10" Command="{Binding АААААААААААА}">
+                                          ItemsSource="{Binding EnumeratedIndicatorContext.SearchListBySubstring}"
+                                          SelectedItem="{Binding EnumeratedIndicatorContext.SelectedItem}"
+                                          Text="{Binding EnumeratedIndicatorContext.Combobox_text}"></ComboBox>
+                                <Button Grid.Column="1" Margin="10" Command="{Binding AddEnumeratedIndicalorCommand}">
                                     <TextBlock Style="{StaticResource headerTextBlock}">
                                     +
                                     </TextBlock>
                                 </Button>
                             </Grid>
-                            <Label Margin="10,0,10,0">Ответ:</Label>
+                            <Label Margin="10,0,10,0">Значение индикатора:</Label>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="9*"/>
@@ -332,22 +332,22 @@
                                       IsTextSearchEnabled="False"
                                       IsEditable="True" 
                                       BorderThickness="1,1,1,1"
-                                          ItemsSource="{Binding AAAAAAAAAAAAAAAAAAAA}"
-                                          SelectedItem="{Binding AAAAAAAAAAAAAAAAAAAAAA}"
-                                          Text="{Binding AAAAAAAAAAAAAAAAAAAAAAAAA}"></ComboBox>
-                                <Button Grid.Column="1" Margin="10" Command="{Binding AAAAAAAAAAAAAAAAAAA}">
+                                          ItemsSource="{Binding EnumeratedValueContext.SearchListBySubstring}"
+                                          SelectedItem="{Binding EnumeratedValueContext.SelectedItem}"
+                                          Text="{Binding EnumeratedValueContext.Combobox_text}"></ComboBox>
+                                <Button Grid.Column="1" Margin="10" Command="{Binding AddEnumeratedValueCommand}">
                                     <TextBlock Style="{StaticResource headerTextBlock}">
                                     +
                                     </TextBlock>
                                 </Button>
                             </Grid>
-                            <Button Margin="10,10,10,10" Command="{Binding AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA}">
+                            <Button Margin="10,10,10,10" Command="{Binding AddEnumeratedIndicatorToDiagnosis}">
                                 <TextBlock Style="{StaticResource headerTextBlock}">
                                     ↓ Добавить к перечислимым индикаторам диагноза ↓
                                 </TextBlock>
                             </Button>
                         </StackPanel>
-                        <ListView Grid.Row="1" Margin="10,20,10,20" ItemsSource="{Binding AAAAAAAAAAAAAAa}">
+                        <ListView Grid.Row="1" Margin="10,20,10,20" ItemsSource="{Binding EnumeratedIndicators}">
                             <ListView.View>
                                 <GridView>
                                     <GridView.ColumnHeaderContainerStyle>
@@ -357,8 +357,8 @@
                                             <Setter Property="TextElement.FontSize" Value="14" />
                                         </Style>
                                     </GridView.ColumnHeaderContainerStyle>
-                                    <GridViewColumn Header="Индикатор" DisplayMemberBinding="{Binding АААААААААААААААААААААААААААААА}"/>
-                                    <GridViewColumn Header="Значение" DisplayMemberBinding="{Binding ААААААААААААААААААААААА}"/>
+                                    <GridViewColumn Header="Индикатор" DisplayMemberBinding="{Binding indicator}"/>
+                                    <GridViewColumn Header="Значение" DisplayMemberBinding="{Binding value}"/>
                                     <GridViewColumn Width="120" Header="Редактировать">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>

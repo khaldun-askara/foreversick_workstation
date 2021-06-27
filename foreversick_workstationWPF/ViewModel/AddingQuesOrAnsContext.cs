@@ -11,7 +11,8 @@ namespace foreversick_workstationWPF.ViewModel
     public enum AddedType
     {
         Question,
-        Answer
+        Answer,
+        EnumValue
     }
 
     class AddingQuesOrAnsContext<T> : INotifyPropertyChanged, ICloseWindow
@@ -20,9 +21,9 @@ namespace foreversick_workstationWPF.ViewModel
         /// Возвращает vm для формы добавления варианта вопроса или ответа
         /// </summary>
         /// <param name="action">Изменение или добавление?</param>
-        /// <param name="current_type">Тип: форма для вопроса или ответа</param>
-        /// <param name="textOfQuesOrAns">Текст вопроса или ответа</param>
-        /// <param name="addingQuesOrAnsFunctionAsync">Функция для добавления вопроса или ответа на сервер</param>
+        /// <param name="current_type">Тип: форма для вопроса, ответа или значения?</param>
+        /// <param name="textOfQuesOrAns">Текст вопроса, ответа или значения</param>
+        /// <param name="addingQuesOrAnsFunctionAsync">Функция для добавления на сервер</param>
         /// <param name="adding_path">Какой путь засунуть в функцию добавления? Пример: GameContext/Question/</param>
         /// <param name="textValidationFuncAsync">Функция для проверки текста вопроса и ответа (функция поиска по подстроке, чтобы если найдётся такой же ответ, сказать об этом пользователю)</param>
         /// <param name="validation_path">Какой путь засунуть в функцию проверки? Пример: GameContext/QuestionBySubstring/</param>
@@ -34,7 +35,7 @@ namespace foreversick_workstationWPF.ViewModel
             string validation_path, TypeOfAction action = TypeOfAction.Insert)
         {
             this.action = action;
-            SetTitleAndButtonText(action);
+            
             this.current_type = current_type;
             this.Name = textOfQuesOrAns;
 
@@ -42,12 +43,18 @@ namespace foreversick_workstationWPF.ViewModel
             {
                 case AddedType.Question:
                     quesOrAnsWord = "вопрос";
+                    Label_text = "вопроса";
                     break;
                 case AddedType.Answer:
                     quesOrAnsWord = "ответ";
+                    Label_text = "ответа";
+                    break;
+                case AddedType.EnumValue:
+                    quesOrAnsWord = "значение";
+                    Label_text = "значения";
                     break;
             }
-            Label_text = quesOrAnsWord + "а";
+            SetTitleAndButtonText(action);
             this.addingQuesOrAnsFunctionAsync = addingQuesOrAnsFunctionAsync;
             this.adding_path = adding_path;
             this.textValidationFuncAsync = textValidationFuncAsync;
@@ -100,7 +107,9 @@ namespace foreversick_workstationWPF.ViewModel
             } 
             set 
             {
-                name = FirstLetterToUp(value);
+                if (current_type != AddedType.EnumValue)
+                    name = FirstLetterToUp(value);
+                else name = ToLower(value);
                 OnPropertyChanged(nameof(Name));
             }
         }
@@ -164,10 +173,11 @@ namespace foreversick_workstationWPF.ViewModel
                     DialogResult = result != -1;
                     Close?.Invoke();
                 }
+                else MessageBox.Show(FirstLetterToUp(quesOrAnsWord) + " уже существует.");
             }
             else
             {
-                MessageBox.Show("Временное предупреждение, которое надо переделать: " + ((string.IsNullOrWhiteSpace(Name)) ? "у вас пустая строка, вы дурачок" : "такой " + quesOrAnsWord + " уже есть!!!"));
+                MessageBox.Show("Введите значение или нажмите \"Отмена\".");
             }
         }
 
@@ -190,6 +200,13 @@ namespace foreversick_workstationWPF.ViewModel
             if (string.IsNullOrWhiteSpace(substring))
                 return string.Empty;
             return Regex.Replace(substring.ToLower(), @"^[a-zа-яё]", m => m.Value.ToUpper()); 
+        }
+
+        public static string ToLower(string substring)
+        {
+            if (string.IsNullOrWhiteSpace(substring))
+                return string.Empty;
+            return substring.ToLower();
         }
     }
 }

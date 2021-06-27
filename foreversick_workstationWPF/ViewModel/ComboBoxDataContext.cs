@@ -35,6 +35,8 @@ namespace foreversick_workstationWPF.ViewModel
             //this.selectedItemChange = selectedItemChange;
             this.searchPath = searchPath;
             this.errorMessage = errorMessage;
+            // инициализация комбобокса для начальных 100 значений
+            OnItemChanged();
         }
 
         public event EventHandler SelectedItemChanged;
@@ -115,7 +117,7 @@ namespace foreversick_workstationWPF.ViewModel
                 _tmrDelaySearch.Stop();
             ObservableCollection<T> old_search = new();
             ObservableCollection<T> new_search = new();
-            if (!string.IsNullOrWhiteSpace(Combobox_text) && Combobox_text.Length > 2)
+            if (/*!string.IsNullOrWhiteSpace(Combobox_text) && Combobox_text.Length > 2*/true)
             {
                 old_search = new(SearchListBySubstring.Where(x => !x.Equals(SelectedItem)).ToList<T>());
                 try

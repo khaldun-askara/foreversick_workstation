@@ -277,4 +277,239 @@ namespace foreversick_workstationWPF.Model
         public double value_min { get; set; }
         public double value_max { get; set; }
     }
+
+
+    [Serializable]
+    public class EnumeratedIndicator : IEquatable<EnumeratedIndicator>
+    {
+        public int indicator_id { get; set; }
+        public string name { get; set; }
+        public EnumeratedIndicator() { }
+
+        public EnumeratedIndicator(int indicator_id, string name)
+        {
+            this.indicator_id = indicator_id;
+            this.name = name;
+        }
+
+        public bool Equals(EnumeratedIndicator other)
+        {
+            return other != null && this.indicator_id == other.indicator_id;
+        }
+        public override string ToString()
+        {
+            return this.name;
+        }
+
+    }
+
+    [Serializable]
+    public class EnumeratedIndicatorList
+    {
+        public List<EnumeratedIndicator> enumeratedIndicators { get; set; }
+        public EnumeratedIndicatorList() { enumeratedIndicators = new List<EnumeratedIndicator>(); }
+        public EnumeratedIndicatorList(List<EnumeratedIndicator> enumeratedIndicators)
+        {
+            this.enumeratedIndicators = enumeratedIndicators;
+        }
+        public void Add(EnumeratedIndicator indicator)
+        {
+            enumeratedIndicators.Add(indicator);
+        }
+
+        public static async Task<List<EnumeratedIndicator>> GetEnumeratedIndicatorListAsync(string path)
+        {
+            List<EnumeratedIndicator> EnumeratedIndicators = new();
+            WebRequest request = WebRequest.Create(App.HOST_URL + path);
+            WebResponse response = await request.GetResponseAsync();
+            string enumindJSON = string.Empty;
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new(stream))
+                enumindJSON = reader.ReadToEnd();
+            EnumeratedIndicators = JsonSerializer.Deserialize<EnumeratedIndicatorList>(enumindJSON).enumeratedIndicators;
+            response.Close();
+            return EnumeratedIndicators;
+        }
+    }
+
+    [Serializable]
+    public class EnumeratedValue : IEquatable<EnumeratedValue>
+    {
+        public int value_id { get; set; }
+        public string name { get; set; }
+        public EnumeratedValue() { }
+
+        public EnumeratedValue(int value_id, string name)
+        {
+            this.value_id = value_id;
+            this.name = name;
+        }
+
+        public bool Equals(EnumeratedValue other)
+        {
+            return other != null && this.value_id == other.value_id;
+        }
+
+        public override string ToString()
+        {
+            return name;
+        }
+
+        public static async Task<int> PostEnumeratedValue(string text, string path)
+        {
+            int result = -1;
+            EnumeratedValue new_value = new(0, text);
+            WebRequest request = WebRequest.Create(App.HOST_URL + path);
+            request.Method = "POST";
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+                WriteIndented = true
+            };
+            string result_stringJSON = JsonSerializer.Serialize<EnumeratedValue>(new_value, options);
+            byte[] byteArray = Encoding.UTF8.GetBytes(result_stringJSON);
+            request.ContentLength = byteArray.Length;
+            request.ContentType = "application/json; charset = UTF-8";
+            Stream dataStream = request.GetRequestStream();
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            dataStream.Close();
+            WebResponse response = await request.GetResponseAsync();
+            using Stream dataStreamResponse = response.GetResponseStream();
+            StreamReader reader = new(dataStreamResponse);
+            if (!int.TryParse(reader.ReadToEnd(), out result))
+                result = -1;
+            reader.Close();
+            dataStreamResponse.Close();
+            return result;
+        }
+    }
+
+    [Serializable]
+    public class EnumeratedValueList
+    {
+        public List<EnumeratedValue> enumeratedValues { get; set; }
+        public EnumeratedValueList() { enumeratedValues = new List<EnumeratedValue>(); }
+        public EnumeratedValueList(List<EnumeratedValue> enumeratedValues)
+        {
+            this.enumeratedValues = enumeratedValues;
+        }
+        public void Add(EnumeratedValue indicator)
+        {
+            enumeratedValues.Add(indicator);
+        }
+
+        public static async Task<List<EnumeratedValue>> GetEnumeratedValueListAsync(string path)
+        {
+            List<EnumeratedValue> EnumeratedValues = new();
+            WebRequest request = WebRequest.Create(App.HOST_URL + path);
+            WebResponse response = await request.GetResponseAsync();
+            string enumvalueJSON = string.Empty;
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new(stream))
+                enumvalueJSON = reader.ReadToEnd();
+            EnumeratedValues = JsonSerializer.Deserialize<EnumeratedValueList>(enumvalueJSON).enumeratedValues;
+            response.Close();
+            return EnumeratedValues;
+        }
+    }
+
+    [Serializable]
+    public class EnumeratedIndicatorInDiagnosis
+    {
+        public int diagnosis_id { get; set; }
+        public EnumeratedIndicator indicator { get; set; }
+        public EnumeratedValue value { get; set; }
+        public EnumeratedIndicatorInDiagnosis() { }
+        public EnumeratedIndicatorInDiagnosis(int diagnosis_id, EnumeratedIndicator indicator, EnumeratedValue value)
+        {
+            this.diagnosis_id = diagnosis_id;
+            this.indicator = indicator;
+            this.value = value;
+        }
+        public override string ToString()
+        {
+            return indicator.name;
+        }
+    }
+
+    [Serializable]
+    public class EnumeratedIndicatorInDiagnosisList
+    {
+        public List<EnumeratedIndicatorInDiagnosis> enumeratedIndicators { get; set; }
+        public EnumeratedIndicatorInDiagnosisList() { enumeratedIndicators = new List<EnumeratedIndicatorInDiagnosis>(); }
+        public EnumeratedIndicatorInDiagnosisList(List<EnumeratedIndicatorInDiagnosis> enumeratedIndicators)
+        {
+            this.enumeratedIndicators = enumeratedIndicators;
+        }
+        public void Add(EnumeratedIndicatorInDiagnosis indicator)
+        {
+            enumeratedIndicators.Add(indicator);
+        }
+
+        public static async Task<List<EnumeratedIndicatorInDiagnosis>> GetEnumeratedIndicatorsForDiagnosis(string path, int diagnosis_id)
+        {
+            List<EnumeratedIndicatorInDiagnosis> EnumeratedIndicators = new();
+            WebRequest request = WebRequest.Create(App.HOST_URL + path + diagnosis_id);
+            WebResponse response = await request.GetResponseAsync();
+            string EnumeratedIndicatorsJSON = string.Empty;
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new(stream))
+                EnumeratedIndicatorsJSON = reader.ReadToEnd();
+            EnumeratedIndicators = JsonSerializer.Deserialize<EnumeratedIndicatorInDiagnosisList>(EnumeratedIndicatorsJSON).enumeratedIndicators;
+            response.Close();
+            return EnumeratedIndicators;
+        }
+
+        public static async Task<bool> EnumeratedIndicatorValidation(string path, int diagnosis_id, int indicator_id, int value_id)
+        {
+            int res = 1;
+            WebRequest request = WebRequest.Create(App.HOST_URL + path + diagnosis_id + "-" + indicator_id + "-" + value_id);
+            WebResponse response = await request.GetResponseAsync();
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new(stream))
+                int.TryParse(reader.ReadToEnd(), out res);
+            response.Close();
+            return res > 0;
+        }
+
+        public static async Task<int> PostEnumeratedIndicatorForDiagnosis(string path, int diagnosis_id, int indicator_id, int value_id)
+        {
+            int result = -1;
+            enum_indicator_in_diagnosis new_value = new()
+            {
+                diagnosis_id = diagnosis_id,
+                indicator_id = indicator_id,
+                value_id = value_id
+            };
+            WebRequest request = WebRequest.Create(App.HOST_URL + path);
+            request.Method = "POST";
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+                WriteIndented = true
+            };
+            string result_stringJSON = JsonSerializer.Serialize<enum_indicator_in_diagnosis>(new_value, options);
+            byte[] byteArray = Encoding.UTF8.GetBytes(result_stringJSON);
+            request.ContentLength = byteArray.Length;
+            request.ContentType = "application/json; charset = UTF-8";
+            Stream dataStream = request.GetRequestStream();
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            dataStream.Close();
+            WebResponse response = await request.GetResponseAsync();
+            using Stream dataStreamResponse = response.GetResponseStream();
+            StreamReader reader = new(dataStreamResponse);
+            if (!int.TryParse(reader.ReadToEnd(), out result))
+                result = -1;
+            reader.Close();
+            dataStreamResponse.Close();
+            return result;
+        }
+    }
+
+    public class enum_indicator_in_diagnosis
+    {
+        public int diagnosis_id { get; set; }
+        public int indicator_id { get; set; }
+        public int value_id { get; set; }
+    }
 }

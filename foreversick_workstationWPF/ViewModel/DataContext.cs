@@ -24,6 +24,12 @@ namespace foreversick_workstationWPF.ViewModel
         public ComboBoxDataContext<NumericalIndicator> NumericalIndicatorContext { get; set; } = new(NumericalIndicatorList.GetNumericalIndicatorListAsync,
                                                                 "GameContext/NumericalIndicatorsBySubstring/",
                                                                 "Не удалось загрузить список числовых индикаторов. Проверьте подключение к интернету и повторите попытку.");
+        public ComboBoxDataContext<EnumeratedIndicator> EnumeratedIndicatorContext { get; set; } = new(EnumeratedIndicatorList.GetEnumeratedIndicatorListAsync,
+                                                                "GameContext/EnumeratedIndicatorsBySubstring/",
+                                                                "Не удалось загрузить список перечислимых индикаторов. Проверьте подключение к интернету и повторите попытку.");
+        public ComboBoxDataContext<EnumeratedValue> EnumeratedValueContext { get; set; } = new(EnumeratedValueList.GetEnumeratedValueListAsync,
+                                                                "GameContext/EnumeratedValuesBySubstring/",
+                                                                "Не удалось загрузить список значений индикаторов. Проверьте подключение к интернету и повторите попытку.");
 
         #endregion
 
@@ -45,6 +51,7 @@ namespace foreversick_workstationWPF.ViewModel
                 GetSuggestionsForDiagnosis(current_diagnosis);
                 GetAswersAndQuestionsForDiagnosis(current_diagnosis);
                 GetNumericalIndicatorsForDiagnosis(current_diagnosis);
+                GetEnumeratedIndicatorsForDiagnosis(current_diagnosis);
             }
         }
 
@@ -167,9 +174,15 @@ namespace foreversick_workstationWPF.ViewModel
                                                                     "GameContext/Answer/",
                                                                     AnswerList.GetAnswersListAsync,
                                                                     "GameContext/AnswersBySubstring/");
+            AddingQuesOrAnsContext<EnumeratedValue> addingFormContextV = new(type,
+                                                                    text,
+                                                                    EnumeratedValue.PostEnumeratedValue,
+                                                                    "GameContext/EnumeratedValue/",
+                                                                    EnumeratedValueList.GetEnumeratedValueListAsync,
+                                                                    "GameContext/EnumeratedValuesBySubstring/");
             AddingQuestion addingAQForm = new()
             {
-                DataContext = (type == AddedType.Question) ? addingFormContextQ : addingFormContextA
+                DataContext = (type == AddedType.Question) ? addingFormContextQ : (type == AddedType.Answer) ? addingFormContextA : addingFormContextV
             };
             bool? resultDialog = addingAQForm.ShowDialog();
             return (resultDialog.HasValue) ? resultDialog.Value : false;
@@ -588,5 +601,116 @@ namespace foreversick_workstationWPF.ViewModel
         #endregion
 
         #endregion numerical indicators tabitem
+
+        #region enumerated indicators tabitem
+        #region add buttons for enumerated indicators
+        ICommand addEnumeratedIndicalorCommand;
+        public ICommand AddEnumeratedIndicalorCommand
+        {
+            get
+            {
+                addEnumeratedIndicalorCommand = new RelayCommand(obj =>
+                {
+                    MessageBox.Show("Буп!");
+                });
+                return addEnumeratedIndicalorCommand;
+            }
+        }
+        ICommand addEnumeratedValueCommand;
+        public ICommand AddEnumeratedValueCommand
+        {
+            get
+            {
+                addEnumeratedValueCommand = new RelayCommand(obj =>
+                {
+                    CreateAddAQCommand(AddedType.EnumValue, EnumeratedValueContext.Combobox_text);
+                });
+                return addEnumeratedValueCommand;
+            }
+        }
+
+        ICommand addEnumeratedIndicatorToDiagnosis;
+        public ICommand AddEnumeratedIndicatorToDiagnosis
+        {
+            get
+            {
+                addEnumeratedIndicatorToDiagnosis = new RelayCommand(obj =>
+                {
+                    AddingEnumeratedIndicatorToDiagnosis();
+                });
+                return addEnumeratedIndicatorToDiagnosis;
+            }
+        }
+
+        async void AddingEnumeratedIndicatorToDiagnosis()
+        {
+            Diagnosis current_diagnosis = DiagnosisDataContext.SelectedItem;
+            EnumeratedIndicator current_indicator = EnumeratedIndicatorContext.SelectedItem;
+            EnumeratedValue current_value = EnumeratedValueContext.SelectedItem;
+            if (current_diagnosis != null
+                && current_indicator != null
+                && current_value != null)
+            {
+                bool isExists = true;
+                try
+                {
+                    isExists = await EnumeratedIndicatorInDiagnosisList.EnumeratedIndicatorValidation("GameContext/DiagnosisEnumeratedIndicatorValidation/",
+                                                                                      current_diagnosis.id,
+                                                                                      current_indicator.indicator_id,
+                                                                                      current_value.value_id);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Не удалось проверить уникальность тройки диагноз-индикатор-значение. Попробуйте ещё раз. Ошибка: " + e.Message);
+                }
+                if (isExists)
+                {
+                    MessageBox.Show("Не удалось добавить значение перечислимого индикатора к диагнозу. Это значение индикатора уже указано для диагноза.");
+                    return;
+                }
+                try
+                {
+                    int result = await EnumeratedIndicatorInDiagnosisList.PostEnumeratedIndicatorForDiagnosis("GameContext/EnumeratedIndicators/",
+                                                                           current_diagnosis.id,
+                                                                           current_indicator.indicator_id,
+                                                                           current_value.value_id);
+                    if (result > 0)
+                        enumeratedIndicators.Add(new(current_diagnosis.id, current_indicator, current_value));
+                    else
+                        MessageBox.Show("Не удалось добавить значение индикатора к диагнозу. Попробуйте ещё раз.");
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Не удалось добавить значение индикатора к диагнозу. Попробуйте ещё раз. Ошибка: " + e.Message);
+                }
+            }
+            else MessageBox.Show
+                    ((current_diagnosis == null ? "Диагноз не выбран.\n" : "")
+                   + (current_indicator == null ? "Индикатор не выбран.\n" : "")
+                   + (current_value == null ? "Значение не выбрано.\n" : ""));
+        }
+        #endregion add buttons for enumerated indicators
+        #region initialising table with enumerated indicators for diagnosis
+        ObservableCollection<EnumeratedIndicatorInDiagnosis> enumeratedIndicators = new();
+        public ObservableCollection<EnumeratedIndicatorInDiagnosis> EnumeratedIndicators { get => enumeratedIndicators; set { enumeratedIndicators = value; OnPropertyChanged(nameof(EnumeratedIndicators)); } }
+        async void GetEnumeratedIndicatorsForDiagnosis(int diagnosis_id)
+        {
+            try
+            {
+                EnumeratedIndicators = new(await EnumeratedIndicatorInDiagnosisList.GetEnumeratedIndicatorsForDiagnosis("GameContext/EnumeratedIndicators/", diagnosis_id));
+            }
+            catch (Exception exc)
+            {
+                MessageBoxResult result = MessageBox.Show(exc.Message + ". Попробовать снова?", "Не удалось загрузить перечислимые индикаторы", MessageBoxButton.YesNo);
+                switch (result)
+                {
+                    case MessageBoxResult.Yes:
+                        GetEnumeratedIndicatorsForDiagnosis(diagnosis_id);
+                        break;
+                }
+            }
+        }
+        #endregion initialising table with enumerated indicators for diagnosis
+        #endregion enumerated indicators tabitem
     }
 }
